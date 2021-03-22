@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    {% block meta %}{% endblock %}
+    <title>{% block title %}foodgram{% endblock %}</title>
+    {% load static %}
+    {% block links %}
+    <link rel="stylesheet" href="{% static 'css/pages/index.css' %}">
+    {% endblock %}
+
+
+</head>
+<body class="body">
+
+
+
+
+{% include 'includes/nav.html' %}
+{% block content %}
+<!-- content -->
+{% endblock %}
+{% include 'includes/footer.html' %}
+<button onclick="myFunction()">Toggle dark mode</button>
+<script>
+    function myFunction() {
+    var element = document.body;
+    element.classList.toggle("dark-mode");
+}
+</script>
+</body>
+</html>
