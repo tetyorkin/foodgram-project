@@ -13,7 +13,7 @@ class Ingredient(models.Model):
     )
 
     def __str__(self):
-        return f'{self.title} {self.dimension}'
+        return f'{self.title}'
 
 
 class Tag(models.Model):
@@ -33,9 +33,8 @@ class Recipe(models.Model):
     image = models.ImageField(upload_to='media/', blank=True, null=True)
     description = models.TextField()
     ingredients = models.ManyToManyField(
-        Ingredient,
-        through='IngredientItem',
-        through_fields=('recipe', 'ingredients'),
+        'IngredientItem',
+        related_name='ingredient_count',
         verbose_name='Ингредиенты'
     )
     tags = models.ManyToManyField(Tag, related_name='recipe_tag',
@@ -65,10 +64,10 @@ class IngredientItem(models.Model):
     ingredients = models.ForeignKey(
         Ingredient, on_delete=models.CASCADE, verbose_name='Ингридиент'
     )
-    count = models.FloatField()
+    count = models.IntegerField()
 
     def __str__(self):
-        return f'{self.recipe}'
+        return f'{self.ingredients} - {self.count}'
 
 
 class Favorites(models.Model):

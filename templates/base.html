@@ -1,29 +1,23 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    {% block meta %}{% endblock %}
-    <title>{% block title %}foodgram{% endblock %}</title>
-    {% load static %}
-    {% block links %}
-    <link rel="stylesheet" href="{% static 'css/pages/index.css' %}">
-    {% endblock %}
-
-
-</head>
-<body class="body">
-
-
-{% block content %}
-<!-- content -->
-{% endblock %}
-{% include 'includes/footer.html' %}
-<button onclick="myFunction()">Toggle dark mode</button>
-<script>
-    function myFunction() {
-    var element = document.body;
-    element.classList.toggle("dark-mode");
-}
-</script>
-</body>
+<<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>{% block title %}{% endblock %} | Assistant product</title>
+        <!-- Загрузка статики -->
+        {% load static %}
+        <link rel="stylesheet" href="{% static 'pages/form.css' %}">
+        <link rel="shortcut icon" type="image/png" href="{% static 'images/logo.png' %}" >
+    </head>
+<body>
+        {% include 'includes/header.html' %}
+        <main>
+            <div class="container">
+                {% block content %}
+                <!-- Содержимое страницы -->
+                {% endblock content %}
+            </div>
+        </main>
+        {% include 'includes/footer.html' %}
+    </body>
 </html>
