@@ -1,40 +1,20 @@
 from django import forms
-from django.core.exceptions import ValidationError
-from .models import Recipe, IngredientItem, Ingredient
+from django.forms import ModelForm
+
+from .models import Recipe
 
 
-class RecipeForm(forms.ModelForm):
+class RecipeForm(ModelForm):
+
     class Meta:
         model = Recipe
         fields = (
             'title',
             'tags',
+            'ingredients',
             'duration',
             'description',
-            'image',
-        )
+            'image')
         widgets = {
-            'tag': forms.CheckboxSelectMultiple(),
+            'description': forms.Textarea(attrs={'rows': 8, 'class': 'form__textarea'}),
         }
-
-    def clean(self):
-        known_ids = []
-        for items in self.data.keys():
-            if 'nameIngredient' in items:
-                name, id = items.split('_')
-                known_ids.append(id)
-        for id in known_ids:
-            title = self.data.get(f'nameIngredient_{id}'),
-            dimension = self.data.get(f'unitsIngredient_{id}')
-            ingredient_exists = Ingredient.objects.filter(
-                title=title[0],
-                dimension=dimension,
-            ).exists()
-            if not ingredient_exists:
-                raise ValidationError('Выберите ингредиент из списка!')
-
-
-class RecipeIngreeForm(forms.ModelForm):
-    class Meta:
-        model = IngredientItem
-        fields = ('count',)

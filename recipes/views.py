@@ -1,11 +1,12 @@
 from django.contrib.auth.decorators import login_required
 from django.core import paginator
+from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.core.paginator import Paginator
 from django.urls import reverse
 
 from users.models import User
-from .models import Recipe, Tag, IngredientItem, Ingredient
+from .models import Recipe, Tag, IngredientItem, Ingredient, ShopList
 from .forms import RecipeForm
 from .utils import get_ingredients_from_js
 
@@ -30,10 +31,14 @@ def index(request):
 
 @login_required
 def new_recipe(request):
-    tags = Tag.objects.all()
-    form = RecipeForm(request.POST or None, files=request.FILES or None)
+    if request.method == 'GET':
+        tags = Tag.objects.all()
+        form = RecipeForm()
     if request.method == 'POST':
+        form = RecipeForm(request.POST or None, files=request.FILES or None)
         ingredients_req = get_ingredients_from_js(request)
+        print(form.errors)
+        print(form.is_valid())
         if not ingredients_req:
             form.add_error(None, 'Добавьте ингредиенты')
         elif form.is_valid():
@@ -48,8 +53,6 @@ def new_recipe(request):
                 recipe_ingredient.save()
             form.save_m2m()
             return redirect('index')
-    else:
-        form = RecipeForm()
     context = {'form': form, 'tags': tags}
     return render(request, 'new_recipe.html', context)
 
@@ -97,3 +100,29 @@ def recipe_edit(request, pk):
         }
 
     return render(request, 'edit_recipe.html', context)
+
+
+@login_required
+def get_ingredients(request):
+    text = request.GET.get('query').rstrip('/')
+    data = []
+    ingredients = Ingredient.objects.filter(
+        title__startswith=text).all()
+    for ingredient in ingredients:
+        data.append(
+            {'title': ingredient.title, 'dimension': ingredient.dimension})
+
+    return JsonResponse(data, safe=False)
+
+
+@login_required
+def shop_list(request):
+    user = request.user
+    my_shop_list = ShopList.objects.filter(user=user.id).first()
+    if my_shop_list:
+        recipes = my_shop_list.recipes.all()
+    else:
+        recipes = None
+    return render(
+        request,
+        template_name='shopList.html', context={'recipes': recipes})

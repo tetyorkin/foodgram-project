@@ -6,7 +6,7 @@
 {#            <li class="nav__item {% if request.resolver_match.url_name == 'my_follows'  %}nav__item_active {% endif %} "><a href="{% url 'my_follows' request.user.username %}" class="nav__link link">Мои подписки</a></li>#}
             <li class="nav__item {% if request.resolver_match.url_name == 'new_recipe' %}nav__item_active {% endif %}"><a href="{% url 'new_recipe' %}" class="nav__link link">Создать рецепт</a></li>
 {#            <li class="nav__item {% if request.resolver_match.url_name == 'favorite' %}nav__item_active {% endif %}" ><a href="{% url 'favorite' %}" class="nav__link link">Избранное</a></li>#}
-{#            <li class="nav__item {% if request.resolver_match.url_name == 'shop_list' %}nav__item_active {% endif %}"><a href="{% url 'shop_list' %}" class="nav__link link">Список покупок</a><span class="badge badge_style_blue nav__badge" id="counter">{{ request|count_recipes }}</span></li>#}
+            <li class="nav__item {% if request.resolver_match.url_name == 'shop_list' %}nav__item_active {% endif %}"><a href="{% url 'shop_list' %}" class="nav__link link">Список покупок</a><span class="badge badge_style_blue nav__badge" id="counter">{{ request|count_recipes }}</span></li>
 {#            <li class="nav__item {% if request.resolver_match.url_name == 'history_view' %}nav__item_active {% endif %} "><a href="{% url 'history_view' %}" class="nav__link link">История покупок</a></li>#}
         </ul>
 
