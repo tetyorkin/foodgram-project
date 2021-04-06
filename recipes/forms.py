@@ -10,11 +10,13 @@ class RecipeForm(ModelForm):
         model = Recipe
         fields = (
             'title',
-            'tags',
-            'ingredients',
+            # 'tags',
+            # 'ingredient',
             'duration',
             'description',
-            'image')
+            'image'
+        )
         widgets = {
-            'description': forms.Textarea(attrs={'rows': 8, 'class': 'form__textarea'}),
+            'tag': forms.CheckboxSelectMultiple(),
         }
+

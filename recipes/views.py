@@ -4,11 +4,12 @@ from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.core.paginator import Paginator
 from django.urls import reverse
+from django.views.decorators.http import require_http_methods
 
 from users.models import User
 from .models import Recipe, Tag, IngredientItem, Ingredient, ShopList
 from .forms import RecipeForm
-from .utils import get_ingredients_from_js
+from .utils import get_ingredients_from_js, get_form_ingredients
 
 
 def index(request):
@@ -31,14 +32,11 @@ def index(request):
 
 @login_required
 def new_recipe(request):
-    if request.method == 'GET':
-        tags = Tag.objects.all()
-        form = RecipeForm()
-    if request.method == 'POST':
+    tags = Tag.objects.all()
+    form = RecipeForm()
+    if request.method == "POST":
         form = RecipeForm(request.POST or None, files=request.FILES or None)
         ingredients_req = get_ingredients_from_js(request)
-        print(form.errors)
-        print(form.is_valid())
         if not ingredients_req:
             form.add_error(None, 'Добавьте ингредиенты')
         elif form.is_valid():
@@ -64,42 +62,46 @@ def recipe_view(request, recipe_id):
     return render(request, 'recipe.html', context)
 
 
-@login_required
-def recipe_edit(request, pk):
-    tags = Tag.objects.all()
-    user = request.user
-    profile = get_object_or_404(User, username=user)
-    recipe = get_object_or_404(Recipe, id=pk, author=profile)
-    if request.user != recipe.author:
-        return redirect('recipe', username=request.user.username, recipe_id=pk)
-    if request.method == 'POST':
+@login_required(login_url='auth/login/')
+@require_http_methods(['GET', 'POST'])
+def recipe_edit(request, recipe_id):
+    recipe = get_object_or_404(Recipe, id=recipe_id)
+    # GET-запрос на страницу редактирования рецепта
+    if request.method == 'GET':
         form = RecipeForm(
-            request.POST or None, files=request.FILES or None, instance=recipe
+            request.POST or None,
+            files=request.FILES or None,
+            instance=recipe
         )
-        ingredients_req = get_ingredients_from_js(request)
-        if form.is_valid():
-            IngredientItem.objects.filter(recipe=recipe).delete()
-            recipe = form.save(commit=False)
-            recipe.author = request.user
-            recipe.save()
-            for title, count in ingredients_req.items():
-                ingredient = get_object_or_404(Ingredient, title=title)
-                recipe_ingredient = IngredientItem(
-                    count=count, ingredients=ingredient, recipe=recipe
-                )
-                recipe_ingredient.save()
-            form.save_m2m()
-            return redirect('index')
-    form = RecipeForm(
-        request.POST or None, files=request.FILES or None, instance=recipe
-    )
-    context = {
-            "form": form,
-            "recipe": recipe,
-            "tags": tags,
+        ingredients = recipe.ingredients.all()
+        recipe_tags = recipe.tags.all()
+        context = {
+            'form': form,
+            'recipe': recipe,
+            'ingredients': ingredients,
+            'recipe_tags': recipe_tags
         }
-
-    return render(request, 'edit_recipe.html', context)
+        return render(request, 'edit_recipe.html', context)
+    # POST-запрос с данными из формы редактирования рецепта
+    elif request.method == 'POST':
+        form = RecipeForm(request.POST or None,
+                          files=request.FILES or None, instance=recipe)
+        if not form.is_valid():
+            context = {'form': form}
+            return render(request, 'edit_recipe.html', context)
+        form.save()
+        print(request.POST)
+        new_titles = request.POST.getlist('nameIngredient')
+        new_units = request.POST.getlist('unitsIngredient')
+        amounts = request.POST.getlist('valueIngredient')
+        products_num = len(new_titles)
+        new_ingredients = []
+        IngredientItem.objects.filter(recipe__id=recipe_id).delete()
+        for i in range(products_num):
+            product = Ingredient.objects.get(title=new_titles[i], dimension=new_units[i])
+            new_ingredients.append(IngredientItem(recipe=recipe, ingredients=product, count=amounts[i]))
+        IngredientItem.objects.bulk_create(new_ingredients)
+        return redirect('index')
 
 
 @login_required
@@ -111,7 +113,7 @@ def get_ingredients(request):
     for ingredient in ingredients:
         data.append(
             {'title': ingredient.title, 'dimension': ingredient.dimension})
-
+    raw = JsonResponse(data, safe=False)
     return JsonResponse(data, safe=False)
 
 

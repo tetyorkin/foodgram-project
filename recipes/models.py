@@ -17,12 +17,31 @@ class Ingredient(models.Model):
 
 
 class Tag(models.Model):
-    title = models.CharField(max_length=8)
-    slug = models.SlugField(unique=True, max_length=50, blank=True, null=True)
-    color = models.CharField(max_length=15, blank=True, null=True)
+    tag_options = {
+        'breakfast': ['orange', 'Завтрак'],
+        'lunch': ['green', 'Обед'],
+        'dinner': ['purple', 'Ужин'],
+    }
+
+    TAG_CHOICES = [
+        ('breakfast', 'Завтрак'),
+        ('lunch', 'Обед'),
+        ('dinner', 'Ужин'),
+    ]
+    title = models.CharField(
+        max_length=20, choices=TAG_CHOICES, verbose_name='tag name'
+    )
 
     def __str__(self):
-        return self.slug
+        return self.title
+
+    @property
+    def color(self):
+        return self.tag_options[self.title][0]
+
+    @property
+    def name(self):
+        return self.tag_options[self.title][1]
 
 
 class Recipe(models.Model):
@@ -32,14 +51,13 @@ class Recipe(models.Model):
     title = models.CharField(max_length=50)
     image = models.ImageField(upload_to='media/', blank=True, null=True)
     description = models.TextField()
-    ingredients = models.ManyToManyField(
-        'IngredientItem',
-        related_name='ingredient_count',
-        verbose_name='Ингредиенты'
+    ingredient = models.ManyToManyField(
+        Ingredient,
+        through='IngredientItem',
+        verbose_name='Ингредиенты',
     )
     tags = models.ManyToManyField(Tag, related_name='recipe_tag',
                                   verbose_name='Тэг')
-    slug = models.SlugField(db_index=True)
     duration = models.PositiveSmallIntegerField(
         'время приготовления', validators=[MinValueValidator(1)]
     )
@@ -52,12 +70,20 @@ class Recipe(models.Model):
         verbose_name_plural = 'Рецепты'
 
     def __str__(self):
-        return f'{self.title} | {self.author} '
+        return f'{self.title} '
 
 
 class IngredientItem(models.Model):
+    recipe = models.ForeignKey(
+        Recipe,
+        on_delete=models.DO_NOTHING,
+        related_name='ingredients',
+    )
     ingredients = models.ForeignKey(
-        Ingredient, on_delete=models.CASCADE, verbose_name='Ингридиент'
+        Ingredient,
+        on_delete=models.CASCADE,
+        related_name='ingredients',
+        verbose_name='Ингридиент',
     )
     count = models.IntegerField()
 

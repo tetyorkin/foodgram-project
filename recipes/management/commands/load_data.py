@@ -6,7 +6,7 @@ from recipes.models import Ingredient
 
 
 class Command(BaseCommand):
-    help = 'Load ingredients data to DB'
+    help = 'Load ingredient data to DB'
 
     def handle(self, *args, **options):
         with open('ingredients.csv', encoding='utf-8') as f:
