@@ -30,29 +30,42 @@ def index(request):
     return render(request, 'index.html', context)
 
 
-@login_required
+@login_required(login_url='auth/login/')
 def new_recipe(request):
-    tags = Tag.objects.all()
-    form = RecipeForm()
-    if request.method == "POST":
+    if request.method == 'GET':
+        tags = Tag.objects.all()
+        form = RecipeForm()
+        context = {'form': form, 'tags': tags}
+        return render(request, 'new_recipe.html', context)
+    elif request.method == 'POST':
         form = RecipeForm(request.POST or None, files=request.FILES or None)
-        ingredients_req = get_ingredients_from_js(request)
-        if not ingredients_req:
-            form.add_error(None, 'Добавьте ингредиенты')
-        elif form.is_valid():
-            recipe = form.save(commit=False)
-            recipe.author = request.user
-            recipe.save()
-            for title, count in ingredients_req.items():
-                ingredient = get_object_or_404(Ingredient, title=title)
-                recipe_ingredient = IngredientItem(
-                    count=count, ingredients=ingredient, recipe=recipe
-                )
-                recipe_ingredient.save()
-            form.save_m2m()
-            return redirect('index')
-    context = {'form': form, 'tags': tags}
-    return render(request, 'new_recipe.html', context)
+        print(form.is_valid())
+        print(form.errors)
+        if not form.is_valid():
+            context = {'form': form}
+            return render(request, 'recipe.html', context)
+        recipe = form.save(commit=False)
+        recipe.author = request.user
+        recipe.save()
+        print(request.POST)
+        ingedient_names = request.POST.getlist('nameIngredient')
+        ingredient_units = request.POST.getlist('unitsIngredient')
+        amounts = request.POST.getlist('valueIngredient')
+        products = [Ingredient.objects.get(
+            title=ingedient_names[i],
+            dimension=ingredient_units[i]
+        ) for i in range(len(ingedient_names))]
+        ingredients = []
+        for i in range(len(amounts)):
+            ingredients.append(IngredientItem(
+                recipe=recipe, ingredients=products[i], count=amounts[i]))
+        IngredientItem.objects.bulk_create(ingredients)
+        tags = ['breakfast', 'lunch', 'dinner']
+        for tag in tags:
+            if request.POST.get(tag) is not None:
+                current_tag = get_object_or_404(Tag, name=tag)
+                form.tag.add(current_tag)
+        return redirect('index')
 
 
 @login_required
@@ -63,7 +76,6 @@ def recipe_view(request, recipe_id):
 
 
 @login_required(login_url='auth/login/')
-@require_http_methods(['GET', 'POST'])
 def recipe_edit(request, recipe_id):
     recipe = get_object_or_404(Recipe, id=recipe_id)
     # GET-запрос на страницу редактирования рецепта
@@ -74,12 +86,13 @@ def recipe_edit(request, recipe_id):
             instance=recipe
         )
         ingredients = recipe.ingredients.all()
-        recipe_tags = recipe.tags.all()
+        tags = recipe.tag.all()
+
         context = {
             'form': form,
             'recipe': recipe,
             'ingredients': ingredients,
-            'recipe_tags': recipe_tags
+            'tags': tags
         }
         return render(request, 'edit_recipe.html', context)
     # POST-запрос с данными из формы редактирования рецепта
@@ -102,6 +115,13 @@ def recipe_edit(request, recipe_id):
             new_ingredients.append(IngredientItem(recipe=recipe, ingredients=product, count=amounts[i]))
         IngredientItem.objects.bulk_create(new_ingredients)
         return redirect('index')
+
+
+@login_required(login_url='auth/login/')
+def delete_recipe(request, recipe_id):
+    recipe = get_object_or_404(Recipe, pk=recipe_id)
+    recipe.delete()
+    return redirect('index')
 
 
 @login_required
@@ -128,3 +148,26 @@ def shop_list(request):
     return render(
         request,
         template_name='shopList.html', context={'recipes': recipes})
+
+
+# @login_required
+# def profile(request, user_id):
+#     profile = get_object_or_404(User, id=user_id)
+#     tags = request.GET.getlist('tag')
+#     recipes_list = Recipe.recipes.tag_filter(tags)
+#     paginator = Paginator(recipes_list.filter(author=profile), 6)
+#     page_number = request.GET.get('page')
+#     page = paginator.get_page(page_number)
+#     context = {
+#         'all_tags': Tag.objects.all(),
+#         'profile': profile,
+#         'page': page,
+#         'paginator': paginator
+#     }
+#     # Если юзер авторизован, добавляет в контекст список
+#     # покупок и избранное
+#     user = request.user
+#     if user.is_authenticated:
+#         _add_subscription_status(context, user, profile)
+#         _extend_context(context, user)
+#     return render(request, 'authorRecipe.html', context)

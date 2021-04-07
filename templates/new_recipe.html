@@ -25,26 +25,26 @@
                 {% endif %}
                 </div>
             </div>
+
             <div class="form__group">
                 <p class="form__label">Теги</p>
                 <div class="form__field-group">
                     <div class="tags">
+                        {% for tag in tags %}
                         <div class="tags__item">
-                            <input type="checkbox" name="breakfast" id="id_breakfast" class="tags__checkbox tags__checkbox_style_orange">
-                            <label for="id_breakfast" class="tags__label">Завтрак</label>
+                            <input type="checkbox" name="tag" value ="{{ tag.id }}" id="id_{{ tag.name }}" class="tags__checkbox tags__checkbox_style_{{ tag.color }}">
+                            <label for="id_{{ tag.name }}" class="tags__label">{{ tag.name }}</label>
                         </div>
-                        <div class="tags__item">
-                            <input type="checkbox" name="lunch" id="id_lunch" class="tags__checkbox tags__checkbox_style_green" checked>
-                            <label for="id_lunch" class="tags__label">Обед</label>
-                        </div>
-                        <div class="tags__item">
-                            <input type="checkbox" name="dinner" id="id_dinner" class="tags__checkbox tags__checkbox_style_purple" checked>
-                            <label for="id_dinner" class="tags__label">Ужин</label>
-                        </div>
+                    {% endfor %}
                     </div>
-                    <span class="form__error"></span>
+                    {% if form.errors %}
+                        {% for error in form.tag.errors %}
+                            <span class="form__error">{{ error|escape }}</span>
+                        {% endfor %}
+                    {% endif %}
                 </div>
             </div>
+
             <div class="form__group">
                 <label for="nameIngredient" class="form__label">Ингредиенты</label>
                 <div class="form__field-group">
@@ -90,13 +90,9 @@
             <div class="form__group">
                 <span class="form__label">Загрузить фото</span>
                 <div class="form__field-group">
-                    {{ form.image|add_classes:'form__file-button-image' }}
-                    {% if form.errors %}
-                        {% for error in field.errors %}
-                            <span class="form__error">{{ error|escape }}</span>
-                        {% endfor %}
-                    {% endif %}
-
+                    <label for="id_file" class="form__file-button">Выбрать файл</label>
+                    <input type="file" class="form__file" name="image" id="id_file" >
+                    <span class="form__error"></span>
                 </div>
             </div>
 

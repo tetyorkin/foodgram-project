@@ -22,7 +22,18 @@ class IngredientAdmin(admin.ModelAdmin):
     list_filter = ('title',)
 
 
-admin.site.register(Tag)
+class TagsAdmin(admin.ModelAdmin):
+    list_display = (
+        'title',
+        'color',
+        'name',
+    )
+    search_fields = ('title',)
+    list_filter = ('title',)
+    empty_value_display = '-пусто-'
+
+
+admin.site.register(Tag, TagsAdmin)
 admin.site.register(Recipe, RecipeAdmin)
 admin.site.register(Ingredient, IngredientAdmin)
 admin.site.register(Subscribe)

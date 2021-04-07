@@ -20,21 +20,26 @@
                     <span class="form__error"></span>
                 </div>
             </div>
+
             <div class="form__group">
                 <p class="form__label">Теги</p>
                 <div class="form__field-group">
                     <div class="tags">
                         {% for tag in tags %}
-                            <div class="tags__item">
-                                <input type="checkbox" name="tags" value="{{ tag.id }}" id="id_{{ tag.slug }}"
-                                       class="tags__checkbox tags__checkbox_style_{{ tag.style }}" {% if tag in recipe_tags %} checked {% endif %}>
-                            <label for="id_{{ tag.slug }}" class="tags__label">{{ tag.title }}</label>
+                        <div class="tags__item">
+                            <input type="checkbox" name="tag" value ="{{ tag.id }}" id="id_{{ tag.name }}" class="tags__checkbox tags__checkbox_style_{{ tag.color }}"{%if tag in recipe.tag.all %} checked {% endif %}>
+                            <label for="id_{{ tag.name }}" class="tags__label">{{ tag.name }}</label>
                         </div>
                         {% endfor %}
                     </div>
-                    <span class="form__error">{{ form.tags.errors }}</span>
+                    {% if form.errors %}
+                        {% for error in form.tag.errors %}
+                            <span class="form__error">{{ error|escape }}</span>
+                        {% endfor %}
+                    {% endif %}
                 </div>
             </div>
+
             <div class="form__group">
                 <label for="nameIngredient" class="form__label">Ингредиенты</label>
                 <div class="form__field-group">
@@ -104,7 +109,10 @@
                 </div>
             {% endif %}
             <div class="form__footer">
-                <button class="button button_style_blue">Сохранить</button>
+                <button class="button button_style_blue">Сохранить</button> &nbsp;&nbsp;&nbsp;
+                <button type="button" class="button button_style_red">
+                    <a  href="{% url 'delete_recipe' recipe.id %}">Удалить</a>
+                </button>
             </div>
         </form>
     </div>

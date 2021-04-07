@@ -23,8 +23,7 @@ class Tag(models.Model):
         'dinner': ['purple', 'Ужин'],
     }
 
-    TAG_CHOICES = [
-        ('breakfast', 'Завтрак'),
+    TAG_CHOICES = [('breakfast', 'Завтрак'),
         ('lunch', 'Обед'),
         ('dinner', 'Ужин'),
     ]
@@ -56,8 +55,7 @@ class Recipe(models.Model):
         through='IngredientItem',
         verbose_name='Ингредиенты',
     )
-    tags = models.ManyToManyField(Tag, related_name='recipe_tag',
-                                  verbose_name='Тэг')
+    tag = models.ManyToManyField(Tag, verbose_name='Тэг')
     duration = models.PositiveSmallIntegerField(
         'время приготовления', validators=[MinValueValidator(1)]
     )
