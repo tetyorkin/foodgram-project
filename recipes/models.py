@@ -55,7 +55,8 @@ class Recipe(models.Model):
         through='IngredientItem',
         verbose_name='Ингредиенты',
     )
-    tag = models.ManyToManyField(Tag, verbose_name='Тэг')
+    tag = models.ManyToManyField(Tag, verbose_name='Тэг',
+                                 on_delete=models.CASCADE)
     duration = models.PositiveSmallIntegerField(
         'время приготовления', validators=[MinValueValidator(1)]
     )
@@ -86,7 +87,7 @@ class IngredientItem(models.Model):
     count = models.IntegerField()
 
     def __str__(self):
-        return f'{self.ingredients} - {self.count}'
+        return f'{self.ingredients}'
 
 
 class Favorites(models.Model):

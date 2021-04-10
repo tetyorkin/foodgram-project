@@ -5,15 +5,17 @@ from .models import Recipe, Tag
 
 
 class RecipeForm(forms.ModelForm):
+
+    error_messages = {
+        'tag': 'не добавлены теги',
+        'ingredients': 'не добавлены ингридиенты'
+    }
+
     class Meta:
         model = Recipe
         fields = (
             'title',
-            'tag',
-            'duration',
             'description',
             'image',
+            'duration',
         )
-        widgets = {
-            'tag': forms.CheckboxSelectMultiple(),
-        }

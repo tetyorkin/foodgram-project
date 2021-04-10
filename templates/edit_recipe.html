@@ -6,18 +6,23 @@
 {% endblock %}
 {% block content %}
 {% csrf_token %}
+{% load user_filters %}
 <main class="main container">
     <div class="main__header">
         <h1 class="main__title">Редактирование рецепта</h1>
     </div>
     <div class="form-container">
-        <form class="form" method="POST" enctype="multipart/form-data">
+        <form class="form" method="post" enctype="multipart/form-data">
             {% csrf_token %}
             <div class="form__group">
                 <label for="id_name" class="form__label">Название рецепта</label>
                 <div class="form__field-group">
-                    <input type="text" id="id_title" name="title" class="form__input" value="{{ recipe.title }}">
-                    <span class="form__error"></span>
+                    {{ form.title|add_classes:'form__input' }}
+                    {% if form.errors %}
+                    {% for error in form.title.errors %}
+                        <span class="form__error">{{ error|escape }}</span>
+                    {% endfor %}
+                {% endif %}
                 </div>
             </div>
 
@@ -27,8 +32,8 @@
                     <div class="tags">
                         {% for tag in tags %}
                         <div class="tags__item">
-                            <input type="checkbox" name="tag" value ="{{ tag.id }}" id="id_{{ tag.name }}" class="tags__checkbox tags__checkbox_style_{{ tag.color }}"{%if tag in recipe.tag.all %} checked {% endif %}>
-                            <label for="id_{{ tag.name }}" class="tags__label">{{ tag.name }}</label>
+                            <input type="checkbox" name="{{ tag.title }}" id="id_{{ tag.title }}" class="tags__checkbox tags__checkbox_style_{{ tag.color }}"{%if tag in recipe.tag.all %} checked {% endif %}>
+                            <label for="id_{{ tag.title }}" class="tags__label">{{ tag.name }}</label>
                         </div>
                         {% endfor %}
                     </div>
@@ -52,21 +57,24 @@
                         <label for="cantidad" class="form__label" id="cantidadVal">шт.</label>
                     </div>
 
+
+
+
                     <div class="form__field-group-ingredientes-container">
                         {% for ingredient in recipe.ingredients.all %}
                             <div class="form__field-item-ingredient"
                                  id="{{ ingredient.id }}">
-                                <span> {{ ingredient }} {{ ingredient.ingredients.dimension }}</span>
+                                <span> {{ ingredient }} - {{ingredient.count }}{{ ingredient.ingredients.dimension }}</span>
                                 <span class="form__field-item-delete"></span>
-                                <input id="nameIngredient_{{ ingredient.id  }}" name="nameIngredient"
-                                       type="hidden"
-                                       value="{{item.ingredient.title}}">
-                                <input id="valueIngredient_{{ ingredient.id  }}" name="valueIngredient"
-                                       type="hidden"
-                                       value="{{item.amount}}">
-                                <input id="unitsIngredient{{ ingredient.id  }}" name="unitsIngredient"
-                                       type="hidden"
-                                       value="{{item.ingredient.dimension}}">
+                                    <input id="nameIngredient_{{ ingredient.id  }}" name="nameIngredient"
+                                           type="hidden"
+                                           value="{{ingredient}}">
+                                    <input id="valueIngredient_{{ ingredient.id  }}" name="valueIngredient"
+                                           type="hidden"
+                                           value="{{ ingredient.count}}">
+                                    <input id="unitsIngredient{{ ingredient.id  }}" name="unitsIngredient"
+                                           type="hidden"
+                                           value="{{ ingredient.ingredients.dimension }}">
                             </div>
                         {% endfor %}
                     </div>
@@ -74,6 +82,15 @@
                     <span class="form__error"></span>
                 </div>
             </div>
+
+
+
+
+
+
+
+
+
             <div class="form__group">
                 <label for="id_time" class="form__label">Время приготовления</label>
                 <div class="form__field-group form__field-group_time">

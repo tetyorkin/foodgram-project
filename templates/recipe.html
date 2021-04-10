@@ -23,9 +23,7 @@
                 </div>
 
                 <ul class="single-card__items">
-                    {% for tag in recipe.tags.all %}
-                        {{ tag }}
-
+                    {% for tag in recipe.tag.all %}
                         <li class="single-card__item"><span class="badge badge_style_{{ tag.color }}">{{ tag.name }}</span></li>
                     {% endfor %}
                 </ul>
@@ -57,7 +55,7 @@
                     <h3 class="single-card__section-title">Ингридиенты:</h3>
                     <div class="single-card__items single-card__items_column">
                     {% for ingredient in recipe.ingredients.all %}
-                    <p class=" single-card__section-item">{{ ingredient}} {{ ingredient.ingredients.dimension }}
+                    <p class=" single-card__section-item">{{ ingredient}} - {{ ingredient.count }} {{ ingredient.ingredients.dimension }}
                     {% endfor %}
                     </div>
                 </div>

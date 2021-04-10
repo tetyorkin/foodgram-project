@@ -37,3 +37,13 @@ def get_form_ingredients(request):
             units = value
             ingredients[ing_id].append(units)
     return ingredients
+
+
+def get_tag_create_recipe(request):
+    tags_list = []
+    print(request.POST.items())
+    for i, j in request.POST.items():
+        if j == 'on':
+            tags_list.append(i)
+    print(tags_list)
+    return tags_list
