@@ -1,25 +1,30 @@
 {% load thumbnail %}
 {% csrf_token %}
-    <div class="card" data-id="{{ recipe.id }}">
-        {% load thumbnail %}
-            {% thumbnail recipe.image '500x500' crop="center" upscale=True as im %}
-                <a href="{% url 'recipe' recipe.id %}" class="link" target="_blank"><img src="{{ im.url }}" alt="{{ recipe.title }}" class="card__image"></a>
-            {% endthumbnail %}
+<div class="card" data-id="{{ recipe.id }}"> 
+    {% load thumbnail %}
+    {% thumbnail recipe.image '500x500' crop="center" upscale=True as im %}
+    <a href="{% url 'recipe' recipe.id %}" class="link" target="_blank"><img src="{{ im.url }}" alt="{{ recipe.title }}" class="card__image"></a> 
+    {% endthumbnail %}
+    <div class="card__body"> 
+        <a class="card__title link" href="{% url 'recipe' recipe.id %}" target="_blank">{{ recipe.title }}</a> 
+        <ul class="card__items"> 
+            {% for tag in recipe.tag.all %}
+            <li class="single-card__item">
+                <span class="badge badge_style_{{ tag.color }}">{{ tag.name }}</span>
+            </li>             
+            {% endfor %}
+        </ul>
 
-        <div class="card__body">
-            <a class="card__title link" href="{% url 'recipe' recipe.id %}" target="_blank">{{ recipe.title }}</a>
-            <ul class="card__items">
-                    {% for tag in recipe.tag.all %}
-                        <li class="single-card__item"><span class="badge badge_style_{{ tag.color }}">{{ tag.name }}</span></li>
-                    {% endfor %}
-            </ul>
-            <div class="card__items card__items_column">
-                <p class="card__text"><span class="icon-time"></span> {{ recipe.duration }} мин</p>
-                <p class="card__text"><span class="icon-user"></span> <a href="#" style="color: black">{{ recipe.author.get_full_name|default:recipe.author.username}}</a></p>
-            </div>
+        <div class="card__items card__items_column">
+            <a class="card__text" href="{% url 'recipe_edit' recipe.id %}" target="_blank">Редактировать</a>
+            <p class="card__text"><span class="icon-time"></span> {{ recipe.duration }} мин</p>
+            <p class="card__text"><span class="icon-user"></span> <a href="{% url 'profile' recipe.author %}" style="color: black">{{ recipe.author.get_full_name|default:recipe.author.username }}</a>
         </div>
-        <div class="card__footer">
-{#            {% include "shop_list_button.html" %}#}
-{#            {% include "favorite_button.html" %}#}
-        </div>
-        </div>
+    </div>     
+    <div class="card__footer"> 
+       {% if request.user.is_authenticated %}
+            <button class="button button_style_light-blue" name="purchpurchases" {% if card not in purchase_list %}data-out{% endif %}><span class="icon-check icon-plus button__icon"></span>Добавить в покупки</button>
+            <button class="button button_style_none" name="favorites" data-out><span class="icon-favorite icon-favorite_active"></span></button>
+       {% endif %}
+</div>     
+</div>

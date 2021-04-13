@@ -27,22 +27,26 @@ def get_filter_values(title):
     return title.getlist("filters")
 
 
-@register.filter(name="get_filter_link")
+@register.filter(name='get_filter_link')
 def get_filter_link(request, tag):
     new_request = request.GET.copy()
-    if tag.title in request.GET.getlist("filters"):
-        filters = new_request.getlist("filters")
+    if tag.title in request.GET.getlist('filters'):
+        filters = new_request.getlist('filters')
         filters.remove(tag.title)
-        new_request.setlist("filters", filters)
+        new_request.setlist('filters', filters)
     else:
-        new_request.appendlist("filters", tag.title)
+        new_request.appendlist('filters', tag.title)
 
     return new_request.urlencode()
 
 
-@register.filter(name="follow")
-def follow(author, user):
-    return Subscribe.objects.filter(user=user, author=author).exists()
+@register.filter(name='is_follower')
+def is_follower(request, profile):
+    if Subscribe.objects.filter(
+        user=request.user, author=profile
+    ).exists():
+        return True
+    return False
 
 
 @register.filter
@@ -50,3 +54,18 @@ def count_recipes(request):
     my_shop_list = ShopList.objects.get_or_create(user=request.user)[0]
     recipes_amount = my_shop_list.recipes.count()
     return recipes_amount
+
+
+@register.filter
+def pluralize(value, endings):
+    # print(value)
+    print(endings)
+    endings = endings.split(',')
+    if value % 100 in (11, 12, 13, 14):
+        return endings[2]
+    if value % 10 == 1:
+        return endings[0]
+    if value % 10 in (2, 3, 4):
+        return endings[1]
+    else:
+        return endings[2]

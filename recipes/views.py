@@ -1,27 +1,33 @@
+import json
+
 from django.contrib.auth.decorators import login_required
 from django.core import paginator
 from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.core.paginator import Paginator
 from django.urls import reverse
-from django.views.decorators.http import require_http_methods
+from django.views.decorators.http import require_http_methods, require_POST
 
 from users.models import User
-from .models import Recipe, Tag, IngredientItem, Ingredient, ShopList
+from .models import Recipe, Tag, IngredientItem, Ingredient, ShopList, Subscribe
 from .forms import RecipeForm
 from .utils import get_ingredients_from_js, get_form_ingredients, \
     get_tag_create_recipe
 
 
 def index(request):
-    recipe_list = Recipe.objects.all()
-    paginator = Paginator(recipe_list, 6)
+    tags_values = request.GET.getlist('filters')
+    recipe = Recipe.objects.all()
+    if tags_values:
+        recipe = recipe.filter(tag__title__in=tags_values).distinct().all()
+    tags = Tag.objects.all()
+    paginator = Paginator(recipe, 6)
     page_number = request.GET.get('page')
     page = paginator.get_page(page_number)
     context = {
         'page': page,
         'paginator': paginator,
-        # 'tag_filters': tag_filters
+        'tags': tags
     }
     # if request.user.is_authenticated:
         # favorites = Recipe.objects.filter(favorite_recipe__user=request.user)
@@ -31,7 +37,7 @@ def index(request):
     return render(request, 'index.html', context)
 
 
-@login_required(login_url='auth/login/')
+@login_required(login_url='accounts/login/')
 def new_recipe(request):
     if request.method == 'GET':
         tags = Tag.objects.all()
@@ -78,7 +84,7 @@ def recipe_view(request, recipe_id):
     return render(request, 'recipe.html', context)
 
 
-@login_required(login_url='auth/login/')
+@login_required(login_url='accounts/login/')
 def recipe_edit(request, recipe_id):
     recipe = get_object_or_404(Recipe, id=recipe_id)
     if request.method == 'GET':
@@ -127,11 +133,14 @@ def recipe_edit(request, recipe_id):
         return redirect('index')
 
 
+@login_required(login_url='auth/login/')
 @login_required()
 def delete_recipe(request, recipe_id):
     recipe = get_object_or_404(Recipe, id=recipe_id)
-    print(recipe)
-    recipe.delete()
+    user = request.user
+    author = recipe.author
+    if user == author:
+        recipe.delete()
     return redirect('index')
 
 
@@ -161,24 +170,63 @@ def shop_list(request):
         template_name='shopList.html', context={'recipes': recipes})
 
 
-# @login_required
-# def profile(request, user_id):
-#     profile = get_object_or_404(User, id=user_id)
-#     tags = request.GET.getlist('tag')
-#     recipes_list = Recipe.recipes.tag_filter(tags)
-#     paginator = Paginator(recipes_list.filter(author=profile), 6)
-#     page_number = request.GET.get('page')
-#     page = paginator.get_page(page_number)
-#     context = {
-#         'all_tags': Tag.objects.all(),
-#         'profile': profile,
-#         'page': page,
-#         'paginator': paginator
-#     }
-#     # Если юзер авторизован, добавляет в контекст список
-#     # покупок и избранное
-#     user = request.user
-#     if user.is_authenticated:
-#         _add_subscription_status(context, user, profile)
-#         _extend_context(context, user)
-#     return render(request, 'authorRecipe.html', context)
+@login_required
+def profile(request, username):
+    author = get_object_or_404(User, username=username)
+    recipe = Recipe.objects.select_related('author').filter(
+        author=author).order_by('-pub_date').all()
+    tags_values = request.GET.getlist('filters')
+    if tags_values:
+        recipe = recipe.filter(tag__title__in=tags_values).distinct().all()
+    tags = Tag.objects.all()
+    paginator = Paginator(recipe, 6)
+    page_number = request.GET.get('page')
+    page = paginator.get_page(page_number)
+
+    context = {
+        'page': page,
+        'paginator': paginator,
+        'tags': tags,
+        'author': author,
+    }
+    return render(request, 'authorRecipe.html', context)
+
+
+@login_required
+def follow(request):
+    authors_list = Subscribe.objects.select_related('user', 'author').filter(
+        user=request.user
+    )
+    paginator = Paginator(authors_list, 6)
+    page_number = request.GET.get('page')
+    page = paginator.get_page(page_number)
+    context = {"page": page, "paginator": paginator}
+    return render(request, 'myFollow.html', context)
+
+
+@login_required(login_url='accounts/login/')
+@require_POST
+def subscription(request):
+    json_data = json.loads(request.body.decode())
+    author = get_object_or_404(User, id=json_data['id'])
+    is_exist = Subscribe.objects.filter(
+        user=request.user, author=author).exists()
+    data = {'success': 'true'}
+    if is_exist:
+        data['success'] = 'false'
+    else:
+        Subscribe.objects.create(user=request.user, author=author)
+    return JsonResponse(data)
+
+
+@login_required(login_url='accounts/login/')
+@require_http_methods('DELETE')
+def delete_subscription(request, author_id):
+    author = get_object_or_404(User, id=author_id)
+    data = {'success': 'true'}
+    follow = Subscribe.objects.filter(
+        user=request.user, author=author)
+    if not follow:
+        data['success'] = 'false'
+    follow.delete()
+    return JsonResponse(data)

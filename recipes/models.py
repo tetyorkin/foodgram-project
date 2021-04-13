@@ -55,8 +55,7 @@ class Recipe(models.Model):
         through='IngredientItem',
         verbose_name='Ингредиенты',
     )
-    tag = models.ManyToManyField(Tag, verbose_name='Тэг',
-                                 on_delete=models.CASCADE)
+    tag = models.ManyToManyField(Tag, verbose_name='Тэг')
     duration = models.PositiveSmallIntegerField(
         'время приготовления', validators=[MinValueValidator(1)]
     )
@@ -75,7 +74,7 @@ class Recipe(models.Model):
 class IngredientItem(models.Model):
     recipe = models.ForeignKey(
         Recipe,
-        on_delete=models.DO_NOTHING,
+        on_delete=models.CASCADE,
         related_name='ingredients',
     )
     ingredients = models.ForeignKey(
