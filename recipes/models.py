@@ -107,7 +107,7 @@ class Subscribe(models.Model):
         User, on_delete=models.CASCADE, related_name='subscribers'
     )
     user = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="subscribes"
+        User, on_delete=models.CASCADE, related_name='subscribes'
     )
 
     class Meta:

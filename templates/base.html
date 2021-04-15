@@ -3,21 +3,23 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-        <title>{% block title %}{% endblock %} | Assistant product</title>
-        <!-- Загрузка статики -->
+        <title>{% block title %}{% endblock %} | Асистент</title>
         {% load static %}
-        <link rel="stylesheet" href="{% static 'pages/form.css' %}">
-        <link rel="shortcut icon" type="image/png" href="{% static 'images/logo.png' %}" >
+        {% block styles %}
+            <link rel="stylesheet" href="{% static 'pages/form.css' %}">
+        {% endblock %}
+{#        <link rel="shortcut icon" type="image/png" href="{% static 'images/logo.png' %}" >#}
     </head>
 <body>
         {% include 'includes/header.html' %}
         <main>
             <div class="container">
                 {% block content %}
-                <!-- Содержимое страницы -->
                 {% endblock content %}
             </div>
         </main>
         {% include 'includes/footer.html' %}
     </body>
 </html>
+
+

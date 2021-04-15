@@ -1,6 +1,6 @@
 from django import template
 from django.utils.html import strip_tags
-from recipes.models import Subscribe, ShopList
+from recipes.models import Subscribe, ShopList, Favorites
 
 register = template.Library()
 
@@ -69,3 +69,20 @@ def pluralize(value, endings):
         return endings[1]
     else:
         return endings[2]
+
+
+@register.filter
+def is_favorite(request, recipe_id):
+    status = Favorites.objects.filter(
+        user=request.user,
+        recipe=recipe_id
+    ).exists()
+    return status
+
+
+@register.filter
+def in_shop_list(request, recipe_id):
+    is_belong = ShopList.objects.filter(
+        user=request.user,recipes=recipe_id
+    ).exists()
+    return is_belong

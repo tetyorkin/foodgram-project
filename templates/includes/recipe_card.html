@@ -1,4 +1,5 @@
 {% load thumbnail %}
+{% load user_filters %}
 {% csrf_token %}
 <div class="card" data-id="{{ recipe.id }}"> 
     {% load thumbnail %}
@@ -17,14 +18,28 @@
 
         <div class="card__items card__items_column">
             <a class="card__text" href="{% url 'recipe_edit' recipe.id %}" target="_blank">Редактировать</a>
-            <p class="card__text"><span class="icon-time"></span> {{ recipe.duration }} мин</p>
+            <p class="card__text"><span class="icon-time"></span> {{ recipe.duration }} мин.</p>
             <p class="card__text"><span class="icon-user"></span> <a href="{% url 'profile' recipe.author %}" style="color: black">{{ recipe.author.get_full_name|default:recipe.author.username }}</a>
         </div>
     </div>     
     <div class="card__footer"> 
        {% if request.user.is_authenticated %}
-            <button class="button button_style_light-blue" name="purchpurchases" {% if card not in purchase_list %}data-out{% endif %}><span class="icon-check icon-plus button__icon"></span>Добавить в покупки</button>
-            <button class="button button_style_none" name="favorites" data-out><span class="icon-favorite icon-favorite_active"></span></button>
+
+            {% if request|in_shop_list:recipe.id %}
+                            <button class="button button_style_light-blue-outline" name="purchases">
+
+                            <span class="icon-check button__icon"></span> Рецепт добавлен</button>
+                        {% else %}
+                            <button class="button button_style_light-blue" name="purchases" data-out>
+
+                            <span class="icon-plus button__icon"></span>Добавить в покупки</button>
+                        {% endif %}
+
+           {% if request|is_favorite:recipe.id %}
+                    <button class="button button_style_none" name="favorites"><span class="icon-favorite icon-favorite_active"></span></button>
+            {% else %}
+                    <button class="button button_style_none" name="favorites" data-out><span class="icon-favorite"></span></button>
+            {% endif %}
        {% endif %}
 </div>     
 </div>

@@ -1,49 +1,42 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
 {% block title %}Список покупок{% endblock %}
-{% load static %}
+
 {% block styles %}
+    {% load static %}
     <link rel="stylesheet" href="{% static 'pages/shopList.css' %}">
 {% endblock %}
+
 {% block content %}
-<main class="main container">
+    {% load thumbnail %}
+    {% csrf_token %}
     <div class="main__header">
         <h1 class="main__title">Список покупок</h1>
     </div>
     <div class="card-list card-list_column">
         <ul class="shopping-list">
-            {% for  recipe in recipes %}
+            {% for recipe in recipes %}
                 <li class="shopping-list__item" data-id="{{ recipe.id }}">
                     <div class="recipe recipe_reverse">
-                        {% load thumbnail %}
-
-                        {% thumbnail recipe.image "72x72" crop="center" upscale=True as im %}
-                            <a href="{% url 'recipe_view' recipe.id %}"><img
-                                    class="card-img" src="{{ im.url }}"
-                                    alt="{{ recipe.title }}"
-                                    class="recipe__image"/>
-                            </a>
+                        {% thumbnail recipe.image '72x72' crop='center' upscale=True as im %}
+                            <img src="{{ im.url }}" alt="{{ recipe.name }}" class="recipe__image recipe__image_big">
                         {% endthumbnail %}
-
                         <h3 class="recipe__title">{{ recipe.title }}</h3>
-
-                        <p class="recipe__text">
-                            <span class="icon-time"></span>
-
-                            {{ recipe.duration }} мин.
-                        </p>
+                        <p class="recipe__text"><span class="icon-time"></span> {{ recipe.duration }} мин.</p>
                     </div>
-
-                    <a href="{% url 'shop_list_delete' recipe.id %}"  class="shopping-list__button link">Удалить</a>
+                     <a href="{% url 'purchases_delete' recipe.id %}" class="shopping-list__button link">Удалить</a>
                 </li>
             {% endfor %}
         </ul>
-        <div class="button-list">
-            <a {% if recipes %} href="{% url 'shop_list_send_pdf' %}" {% endif %}><button class="button button_style_blue">Скачать список</button></a>
-            <a {% if recipes %} href="{% url 'shop_list_delete_all' %}" {% endif %}><button class="button button_new button_style_red">Удалить список</button></a>
-        </div>
+        {% if recipes %}
+            <a class="button button_style_blue" href="{% url 'purchases_download' %}">Скачать список</a>
+        {% endif %}
     </div>
-    {% if page.has_other_pages %}
-        {% include "includes/paginator.html" with items=page paginator=paginator%}
-    {% endif %}
-</main>
+{% endblock %}
+
+{% block javascript %}
+    {% load static %}
+    <script src="{% static 'js/components/Header.js' %}"></script>
+    <script src="{% static 'js/components/ShopList.js' %}"></script>
+    <script src="{% static 'js/api/Api.js' %}"></script>
+    <script src="{% static 'shopList.js' %}"></script>
 {% endblock %}

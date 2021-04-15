@@ -1,3 +1,7 @@
+from io import BytesIO
+from django.http import HttpResponse
+from django.template.loader import get_template
+
 
 def get_ingredients_from_js(request):
     ingredients = {}
@@ -41,9 +45,19 @@ def get_form_ingredients(request):
 
 def get_tag_create_recipe(request):
     tags_list = []
-    print(request.POST.items())
     for i, j in request.POST.items():
         if j == 'on':
             tags_list.append(i)
-    print(tags_list)
     return tags_list
+
+
+def render_to_pdf(template_src, context_dict=None):
+    if context_dict is None:
+        context_dict = {}
+    template = get_template(template_src)
+    html = template.render(context_dict)
+    result = BytesIO()
+    pdf = pisa.pisaDocument(BytesIO(html.encode("ISO-8859-1")), result)
+    if not pdf.err:
+        return HttpResponse(result.getvalue(), content_type='application/pdf')
+    return None
