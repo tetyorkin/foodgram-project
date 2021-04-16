@@ -49,22 +49,26 @@ def new_recipe(request):
         context = {'form': form, 'tags': tags}
         return render(request, 'new_recipe.html', context)
     elif request.method == 'POST':
-        print(request.POST)
-        form = RecipeForm(request.POST or None, files=request.FILES or None)
-        if not form.is_valid():
-            context = {'form': form}
-            return render(request, 'recipe.html', context)
+        form = RecipeForm(request.POST or None, files=request.FILES)
         tags = get_tag_create_recipe(request)
+        ingedient_names = request.POST.getlist('nameIngredient')
+        ingredient_units = request.POST.getlist('unitsIngredient')
+        amounts = request.POST.getlist('valueIngredient')
         if not tags:
-            form.add_error(None, 'Не добавлены теги')
+            form.add_error('tag', 'Обязательное поле')
+        if not ingedient_names:
+            form.add_error('ingredient', 'Ингредиент не выбран')
+        if not form.is_valid():
+            tags = Tag.objects.all()
+            context = {'form': form, 'tags': tags}
+            return render(request, 'new_recipe.html', context)
+        tags = get_tag_create_recipe(request)
         recipe = form.save(commit=False)
         recipe.author = request.user
         recipe.save()
         print(request.POST)
 
-        ingedient_names = request.POST.getlist('nameIngredient')
-        ingredient_units = request.POST.getlist('unitsIngredient')
-        amounts = request.POST.getlist('valueIngredient')
+
         products = [Ingredient.objects.get(
             title=ingedient_names[i],
             dimension=ingredient_units[i]
@@ -79,7 +83,6 @@ def new_recipe(request):
             recipe.tag.add(tag)
         form.save_m2m()
         return redirect('index')
-
 
 
 def recipe_view(request, recipe_id):
@@ -110,37 +113,37 @@ def recipe_edit(request, recipe_id):
     elif request.method == 'POST':
         form = RecipeForm(request.POST or None,
                           files=request.FILES or None, instance=recipe)
+        tags = get_tag_create_recipe(request)
+        ingedient_names = request.POST.getlist('nameIngredient')
+        ingredient_units = request.POST.getlist('unitsIngredient')
+        amounts = request.POST.getlist('valueIngredient')
+        if not tags:
+            form.add_error('tag', 'Обязательное поле')
+        if not ingedient_names:
+            form.add_error('ingredient', 'Ингредиент не выбран')
         if not form.is_valid():
             context = {'form': form}
             return render(request, 'edit_recipe.html', context)
         form.save()
-        print(request.POST)
-        new_titles = request.POST.getlist('nameIngredient')
-        print(new_titles)
-        new_units = request.POST.getlist('unitsIngredient')
-        amounts = request.POST.getlist('valueIngredient')
-        products_num = len(new_titles)
+        products_num = len(ingedient_names)
         new_ingredients = []
         IngredientItem.objects.filter(recipe__id=recipe_id).delete()
         for i in range(products_num):
-            print(new_titles[i])
-            product = Ingredient.objects.get(title=new_titles[i],
-                                             dimension=new_units[i])
+            product = Ingredient.objects.get(title=ingedient_names[i],
+                                             dimension=ingredient_units[i])
             new_ingredients.append(
                 IngredientItem(recipe=recipe, ingredients=product,
                                count=amounts[i]))
         IngredientItem.objects.bulk_create(new_ingredients)
         tags = get_tag_create_recipe(request)
         recipe.tag.clear()
-        if not tags:
-            form.add_error(None, 'Не добавлены теги')
         for i in tags:
             tag = get_object_or_404(Tag, title=i)
             recipe.tag.add(tag)
         return redirect('index')
 
 
-@login_required(login_url='auth/login/')
+@login_required(login_url='accounts/login/')
 @login_required()
 def delete_recipe(request, recipe_id):
     recipe = get_object_or_404(Recipe, id=recipe_id)
