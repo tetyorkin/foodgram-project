@@ -1,22 +1,19 @@
 import csv
 import json
-from collections import defaultdict
 
 from django.contrib.auth.decorators import login_required
-from django.core import paginator
 from django.db.models import Sum
 from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.core.paginator import Paginator
-from django.urls import reverse
 from django.views.decorators.http import require_http_methods, require_POST
 
 from users.models import User
-from .models import Recipe, Tag, IngredientItem, Ingredient, ShopList, \
-    Subscribe, Favorites
+from .models import (
+    Recipe, Tag, IngredientItem, Ingredient, ShopList, Subscribe, Favorites
+)
 from .forms import RecipeForm
-from .utils import get_ingredients_from_js, get_form_ingredients, \
-    get_tag_create_recipe, render_to_pdf
+from .utils import get_tag_create_recipe
 
 
 def index(request):
@@ -66,9 +63,6 @@ def new_recipe(request):
         recipe = form.save(commit=False)
         recipe.author = request.user
         recipe.save()
-        print(request.POST)
-
-
         products = [Ingredient.objects.get(
             title=ingedient_names[i],
             dimension=ingredient_units[i]
@@ -92,6 +86,7 @@ def recipe_view(request, recipe_id):
 
 
 @login_required(login_url='accounts/login/')
+@login_required()
 def recipe_edit(request, recipe_id):
     recipe = get_object_or_404(Recipe, id=recipe_id)
     if request.method == 'GET':

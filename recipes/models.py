@@ -23,7 +23,8 @@ class Tag(models.Model):
         'dinner': ['purple', 'Ужин'],
     }
 
-    TAG_CHOICES = [('breakfast', 'Завтрак'),
+    TAG_CHOICES = [
+        ('breakfast', 'Завтрак'),
         ('lunch', 'Обед'),
         ('dinner', 'Ужин'),
     ]

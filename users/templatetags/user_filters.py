@@ -58,8 +58,6 @@ def count_recipes(request):
 
 @register.filter
 def pluralize(value, endings):
-    # print(value)
-    print(endings)
     endings = endings.split(',')
     if value % 100 in (11, 12, 13, 14):
         return endings[2]
@@ -83,6 +81,6 @@ def is_favorite(request, recipe_id):
 @register.filter
 def in_shop_list(request, recipe_id):
     is_belong = ShopList.objects.filter(
-        user=request.user,recipes=recipe_id
+        user=request.user, recipes=recipe_id
     ).exists()
     return is_belong
