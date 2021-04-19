@@ -7,5 +7,5 @@ CMD python manage.py makemigrations && \
  python manage.py migrate && \
  python manage.py collectstatic --noinput && \
  python manage.py load_data && \
- python manage.py loaddata data.json && \
+ python manage.py loaddata db.json && \
  gunicorn footgram.wsgi:application --bind 0.0.0.0:8000
