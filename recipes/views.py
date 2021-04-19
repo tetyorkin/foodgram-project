@@ -30,7 +30,7 @@ def index(request):
         'paginator': paginator,
         'tags': tags,
     }
-    # if request.user.is_authenticated:
+    # if request.user.is_authenticated
     # favorites = Recipe.objects.filter(favorite_recipe__user=request.user)
     # wishlist = Recipe.objects.filter(wishlist_recipe__user=request.user)
     # context['wishlist'] = wishlist
