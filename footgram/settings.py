@@ -26,7 +26,9 @@ SECRET_KEY = 'x1)-fxl7und0689xz2mnqvt6=5^n&+@*h*r$*=$otfzk)_j5-p'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    'foodgram'
+]
 
 
 # Application definition
