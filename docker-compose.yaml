@@ -14,7 +14,7 @@ services:
       - ./.env
 
   web:
-    image: tetyorkin/yamdb:latest
+    image: tetyorkin/foodgram-project:latest
     restart: always
     depends_on:
       - db
