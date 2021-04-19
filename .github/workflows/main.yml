@@ -63,15 +63,21 @@ jobs:
 
       - name: executing remote ssh commands to deploy
         uses: appleboy/ssh-action@master
+        env:
+          ENV_FILE: ${{ secrets.ENV_FILE }}
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USER }}
           key: ${{ secrets.SSH_KEY }}
           passphrase: ${{ secrets.PASSPHRASE }}
+          envs: ENV_FILE
           script: |
             cd ~
             cd ./code
+            sudo touch .env
+            echo "$ENV_FILE" | sudo tee .env
             sudo docker-compose down
+            sudo docker rmi tetyorkin/foodgram-project -f
             sudo docker pull tetyorkin/foodgram-project:latest
             sudo docker-compose up -d
 
