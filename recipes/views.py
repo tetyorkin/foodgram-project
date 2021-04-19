@@ -111,6 +111,10 @@ def recipe_edit(request, recipe_id):
         }
         return render(request, 'edit_recipe.html', context)
     elif request.method == 'POST':
+        user = request.user
+        author = recipe.author
+        if user != author:
+            return render(request, 'forbiten.html')
         form = RecipeForm(request.POST or None,
                           files=request.FILES or None, instance=recipe)
         tags = get_tag_create_recipe(request)
@@ -151,7 +155,7 @@ def delete_recipe(request, recipe_id):
     author = recipe.author
     if user == author:
         recipe.delete()
-    return redirect('index')
+    return render(request, 'forbiten.html')
 
 
 @login_required

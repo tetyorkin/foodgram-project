@@ -1,0 +1,8 @@
+.form__footer {
+    display: flex;
+    align-items: center;
+}
+a {
+  color: white; /* blue colors for links too */
+  text-decoration: inherit; /* no underline */
+}
