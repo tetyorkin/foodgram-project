@@ -7,7 +7,6 @@
             <li class="nav__item {% if request.resolver_match.url_name == 'new_recipe' %}nav__item_active {% endif %}"><a href="{% url 'new_recipe' %}" class="nav__link link">Создать рецепт</a></li>
             <li class="nav__item {% if request.resolver_match.url_name == 'favorite_index' %}nav__item_active {% endif %}"><a href="{% url 'favorite_index' %}" class="nav__link link">Избранное</a></li>
             <li class="nav__item {% if request.resolver_match.url_name == 'purchases_list' %}nav__item_active {% endif %}"><a href="{% url 'purchases_list' %}" class="nav__link link">Список покупок</a><span class="badge badge_style_blue nav__badge" id="counter">{{ request|count_recipes }}</span></li>
-{#            <li class="nav__item {% if request.resolver_match.url_name == 'history_view' %}nav__item_active {% endif %} "><a href="{% url 'history_view' %}" class="nav__link link">История покупок</a></li>#}
         </ul>
 
         <ul class="nav__items list">
@@ -21,5 +20,3 @@
         </ul>
     </div>
 </nav>
-
-{#            <li class="nav__item {% if request.resolver_match.url_name == 'my_follows'  %}nav__item_active {% endif %} "><a href="{% url 'my_follows' request.user.username %}" class="nav__link link">Мои подписки</a></li>#}

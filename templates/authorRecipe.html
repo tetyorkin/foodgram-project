@@ -13,7 +13,7 @@
            {% include 'includes/tags.html' %}
         </div>
 
-        {% if request.user.is_authenticated and request.user != author.username %}
+        {% if request.user.is_authenticated and request.user != author %}
             <div class="author-subscribe" data-author="{{ author.id }}">
                 <p style="padding: 0 0 2em 0;">
                     <button class="button button_style_light-blue button_size_auto" name="subscribe"
@@ -21,7 +21,7 @@
                                 data-out
                             {% endif %}>
                             {% if is_subscribed %}
-                                <span class="icon-check button__icon"></span>Отписаться на автора
+                                <span class="icon-check button__icon"></span>Отписаться от автора
                             {% else %}Подписаться на автора{% endif %}</button>
                 </p>
             </div>

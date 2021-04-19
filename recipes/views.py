@@ -30,11 +30,6 @@ def index(request):
         'paginator': paginator,
         'tags': tags,
     }
-    # if request.user.is_authenticated:
-    # favorites = Recipe.objects.filter(favorite_recipe__user=request.user)
-    # wishlist = Recipe.objects.filter(wishlist_recipe__user=request.user)
-    # context['wishlist'] = wishlist
-    # context['favorites'] = favorites
     return render(request, 'index.html', context)
 
 
@@ -250,7 +245,7 @@ def follow(request):
     paginator = Paginator(authors_list, 6)
     page_number = request.GET.get('page')
     page = paginator.get_page(page_number)
-    context = {"page": page, "paginator": paginator}
+    context = {'page': page, 'paginator': paginator}
     return render(request, 'myFollow.html', context)
 
 
