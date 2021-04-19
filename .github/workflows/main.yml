@@ -43,7 +43,7 @@ jobs:
         uses: docker/build-push-action@v2
         with:
          push: true
-         tags: tetyorkin/foodgram:latest
+         tags: tetyorkin/foodgram-project:latest
 
   deploy:
     runs-on: ubuntu-latest
@@ -72,7 +72,7 @@ jobs:
             cd ~
             cd ./code
             sudo docker-compose down
-            sudo docker pull tetyorkin/foodgram:latest
+            sudo docker pull tetyorkin/foodgram-project:latest
             sudo docker-compose up -d
 
   send_message:
