@@ -1,6 +1,7 @@
 from django import template
 from django.utils.html import strip_tags
-from recipes.models import Subscribe, ShopList, Favorites
+
+from recipes.models import Favorites, ShopList, Subscribe
 
 register = template.Library()
 
@@ -80,7 +81,7 @@ def is_favorite(request, recipe_id):
 
 @register.filter
 def in_shop_list(request, recipe_id):
-    is_belong = ShopList.objects.filter(
+    is_exists = ShopList.objects.filter(
         user=request.user, recipes=recipe_id
     ).exists()
-    return is_belong
+    return is_exists

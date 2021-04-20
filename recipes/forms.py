@@ -14,18 +14,6 @@ class RecipeForm(forms.ModelForm):
             'duration',
         )
 
-    widgets = {
-        'title': forms.TextInput(
-            attrs={'class': 'form__input', 'autocomplete': 'off'}
-        ),
-        'description': forms.Textarea(
-            attrs={'class': 'form__textarea', 'rows': 8}
-        ),
-        'image': forms.FileInput(
-            attrs={'style': 'font-family: "Montserrat", sans-serif;'}
-        ),
-    }
-
     tag = forms.ModelMultipleChoiceField(
         Tag.objects.all(), widget=forms.CheckboxSelectMultiple, required=False)
     ingredient = forms.CharField(max_length=250, required=False)

@@ -2,17 +2,17 @@ import csv
 import json
 
 from django.contrib.auth.decorators import login_required
-from django.db.models import Sum
-from django.http import JsonResponse, HttpResponse
-from django.shortcuts import render, redirect, get_object_or_404
 from django.core.paginator import Paginator
+from django.db.models import Sum
+from django.http import HttpResponse, JsonResponse
+from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_http_methods, require_POST
 
 from users.models import User
-from .models import (
-    Recipe, Tag, IngredientItem, Ingredient, ShopList, Subscribe, Favorites
-)
+
 from .forms import RecipeForm
+from .models import (Favorites, Ingredient, IngredientItem, Recipe, ShopList,
+                     Subscribe, Tag)
 from .utils import get_tag_create_recipe
 
 
@@ -183,8 +183,24 @@ def purchases_add(request):
     return JsonResponse({'success': False})
 
 
-@login_required
 def purchases_delete(request, recipe_id):
+    user = request.user
+    my_shop_list = ShopList.objects.get_or_create(user=user.id)[0]
+    current_recipe = get_object_or_404(Recipe, id=recipe_id)
+    my_shop_list.recipes.remove(current_recipe)
+    if my_shop_list.delete():
+        return JsonResponse({'success': True})
+    return JsonResponse({'success': False})
+    #     recipe_id = json.loads(request.body).get('id')
+    #     recipe = get_object_or_404(Recipe, id=recipe_id)
+    #     my_shop_list = ShopList.objects.get_or_create(user=request.user)[0]
+    #     my_shop_list.recipes.add(recipe)
+    #     return JsonResponse({'success': True})
+    # return JsonResponse({'success': False})
+
+
+@login_required
+def purchases_delete_index(request, recipe_id):
     user = request.user
     my_shop_list = ShopList.objects.get_or_create(user=user.id)[0]
     current_recipe = get_object_or_404(Recipe, id=recipe_id)
@@ -227,12 +243,14 @@ def profile(request, username):
     paginator = Paginator(recipe, 6)
     page_number = request.GET.get('page')
     page = paginator.get_page(page_number)
+    follow = request.user.is_authenticated and request.user != author
 
     context = {
         'page': page,
         'paginator': paginator,
         'tags': tags,
         'author': author,
+        'follow': follow,
     }
     return render(request, 'authorRecipe.html', context)
 
