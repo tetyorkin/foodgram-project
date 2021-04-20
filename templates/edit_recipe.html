@@ -57,9 +57,6 @@
                         <label for="cantidad" class="form__label" id="cantidadVal">шт.</label>
                     </div>
 
-
-
-
                     <div class="form__field-group-ingredientes-container">
                         {% for ingredient in recipe.ingredients.all %}
                             <div class="form__field-item-ingredient"
@@ -99,13 +96,13 @@
                     <span class="form__error"></span>
                 </div>
             </div>
-            <div class="form__group">
+           <div class="form__group">
                 <label for="id_description" class="form__label">Описание</label>
                 <div class="form__field-group">
-                    <textarea name="description" id="id_description" rows="8" class="form__textarea">
-                        {{ recipe.description|add_classes:'form__textarea' }}
-                    </textarea>
-                    <span class="form__error">{{ form.description.errors }}</span>
+                    {{ form.description|add_classes:'form__textarea' }}
+                    {% for error in form.description.errors %}
+                        <span class="form__error">{{ error }}</span>
+                    {% endfor %}
                 </div>
             </div>
             <div class="form__group">

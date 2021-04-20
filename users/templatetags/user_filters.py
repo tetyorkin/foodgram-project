@@ -85,3 +85,10 @@ def in_shop_list(request, recipe_id):
         user=request.user, recipes=recipe_id
     ).exists()
     return is_exists
+
+
+# @register.filter
+# def check_blanks(value: str):
+#     raw = value.split(' ')
+#     print(raw)
+#     return raw

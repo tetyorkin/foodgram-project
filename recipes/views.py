@@ -184,19 +184,13 @@ def purchases_add(request):
 
 
 def purchases_delete(request, recipe_id):
-    user = request.user
-    my_shop_list = ShopList.objects.get_or_create(user=user.id)[0]
-    current_recipe = get_object_or_404(Recipe, id=recipe_id)
-    my_shop_list.recipes.remove(current_recipe)
-    if my_shop_list.delete():
+    if request.method == 'DELETE':
+        user = request.user
+        my_shop_list = ShopList.objects.get_or_create(user=user.id)[0]
+        current_recipe = get_object_or_404(Recipe, id=recipe_id)
+        my_shop_list.recipes.remove(current_recipe)
         return JsonResponse({'success': True})
     return JsonResponse({'success': False})
-    #     recipe_id = json.loads(request.body).get('id')
-    #     recipe = get_object_or_404(Recipe, id=recipe_id)
-    #     my_shop_list = ShopList.objects.get_or_create(user=request.user)[0]
-    #     my_shop_list.recipes.add(recipe)
-    #     return JsonResponse({'success': True})
-    # return JsonResponse({'success': False})
 
 
 @login_required

@@ -14,10 +14,11 @@ class RecipeForm(forms.ModelForm):
             'duration',
         )
 
+
     tag = forms.ModelMultipleChoiceField(
         Tag.objects.all(), widget=forms.CheckboxSelectMultiple, required=False)
     ingredient = forms.CharField(max_length=250, required=False)
-    image = forms.ImageField(required=True)
+    description = forms.CharField(widget=forms.Textarea)
     duration = forms.fields.IntegerField(
         min_value=1,
         widget=forms.NumberInput(
