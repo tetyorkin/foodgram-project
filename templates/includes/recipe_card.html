@@ -17,7 +17,6 @@
         </ul>
 
         <div class="card__items card__items_column">
-            <a class="card__text" href="{% url 'recipe_edit' recipe.id %}" target="_blank">Редактировать</a>
             <p class="card__text"><span class="icon-time"></span> {{ recipe.duration }} мин.</p>
             <p class="card__text"><span class="icon-user"></span> <a href="{% url 'profile' recipe.author %}" style="color: black">{{ recipe.author.get_full_name|default:recipe.author.username }}</a>
         </div>
