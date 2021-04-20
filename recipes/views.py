@@ -13,7 +13,7 @@ from users.models import User
 from .forms import RecipeForm
 from .models import (Favorites, Ingredient, IngredientItem, Recipe, ShopList,
                      Subscribe, Tag)
-from .utils import get_tag_create_recipe
+from .utils import get_tag
 
 
 def index(request):
@@ -40,9 +40,9 @@ def new_recipe(request):
         form = RecipeForm()
         context = {'form': form, 'tags': tags}
         return render(request, 'new_recipe.html', context)
-    elif request.method == 'POST':
+    if request.method == 'POST':
         form = RecipeForm(request.POST or None, files=request.FILES)
-        tags = get_tag_create_recipe(request)
+        tags = get_tag(request)
         ingedient_names = request.POST.getlist('nameIngredient')
         ingredient_units = request.POST.getlist('unitsIngredient')
         amounts = request.POST.getlist('valueIngredient')
@@ -54,7 +54,7 @@ def new_recipe(request):
             tags = Tag.objects.all()
             context = {'form': form, 'tags': tags}
             return render(request, 'new_recipe.html', context)
-        tags = get_tag_create_recipe(request)
+        tags = get_tag(request)
         recipe = form.save(commit=False)
         recipe.author = request.user
         recipe.save()
@@ -100,14 +100,14 @@ def recipe_edit(request, recipe_id):
             'tags': tags
         }
         return render(request, 'edit_recipe.html', context)
-    elif request.method == 'POST':
+    if request.method == 'POST':
         user = request.user
         author = recipe.author
         if user != author:
             return render(request, 'forbiten.html')
         form = RecipeForm(request.POST or None,
                           files=request.FILES or None, instance=recipe)
-        tags = get_tag_create_recipe(request)
+        tags = get_tag(request)
         ingedient_names = request.POST.getlist('nameIngredient')
         ingredient_units = request.POST.getlist('unitsIngredient')
         amounts = request.POST.getlist('valueIngredient')
@@ -129,7 +129,7 @@ def recipe_edit(request, recipe_id):
                 IngredientItem(recipe=recipe, ingredients=product,
                                count=amounts[i]))
         IngredientItem.objects.bulk_create(new_ingredients)
-        tags = get_tag_create_recipe(request)
+        tags = get_tag(request)
         recipe.tag.clear()
         for i in tags:
             tag = get_object_or_404(Tag, title=i)
@@ -177,8 +177,8 @@ def purchases_add(request):
     if request.method == 'POST':
         recipe_id = json.loads(request.body).get('id')
         recipe = get_object_or_404(Recipe, id=recipe_id)
-        my_shop_list = ShopList.objects.get_or_create(user=request.user)[0]
-        my_shop_list.recipes.add(recipe)
+        shop_list = ShopList.objects.get_or_create(user=request.user)[0]
+        shop_list.recipes.add(recipe)
         return JsonResponse({'success': True})
     return JsonResponse({'success': False})
 
@@ -186,9 +186,9 @@ def purchases_add(request):
 def purchases_delete(request, recipe_id):
     if request.method == 'DELETE':
         user = request.user
-        my_shop_list = ShopList.objects.get_or_create(user=user.id)[0]
+        shop_list = ShopList.objects.get_or_create(user=user.id)[0]
         current_recipe = get_object_or_404(Recipe, id=recipe_id)
-        my_shop_list.recipes.remove(current_recipe)
+        shop_list.recipes.remove(current_recipe)
         return JsonResponse({'success': True})
     return JsonResponse({'success': False})
 
@@ -196,9 +196,9 @@ def purchases_delete(request, recipe_id):
 @login_required
 def purchases_delete_index(request, recipe_id):
     user = request.user
-    my_shop_list = ShopList.objects.get_or_create(user=user.id)[0]
+    shop_list = ShopList.objects.get_or_create(user=user.id)[0]
     current_recipe = get_object_or_404(Recipe, id=recipe_id)
-    my_shop_list.recipes.remove(current_recipe)
+    shop_list.recipes.remove(current_recipe)
     return redirect('purchases_list')
 
 
@@ -299,10 +299,11 @@ def favorite_index(request, ):
         recipe_list = recipe_list.filter(
             tag__title__in=tags_values
         ).distinct()
+    tags = Tag.objects.all()
     paginator = Paginator(recipe_list, 6)
     page_number = request.GET.get('page')
     page = paginator.get_page(page_number)
-    context = {'page': page, 'paginator': paginator}
+    context = {'page': page, 'paginator': paginator, 'tags': tags}
     return render(request, 'favorite.html', context)
 
 

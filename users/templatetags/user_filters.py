@@ -8,7 +8,7 @@ register = template.Library()
 
 @register.filter(name='add_classes')
 def add_classes(field, css):
-    return field.as_widget(attrs={"class": css})
+    return field.as_widget(attrs={'class': css})
 
 
 @register.filter(name='remove_tag')
@@ -17,18 +17,12 @@ def remove_tag(value):
     return strip_tags(new_value)
 
 
-@register.filter(name='remove_email')
-def remove_email(value):
-    new_value = strip_tags(value)
-    return new_value.replace('email', '')
-
-
-@register.filter(name="get_filter_values")
+@register.filter()
 def get_filter_values(title):
-    return title.getlist("filters")
+    return title.getlist('filters')
 
 
-@register.filter(name='get_filter_link')
+@register.filter()
 def get_filter_link(request, tag):
     new_request = request.GET.copy()
     if tag.title in request.GET.getlist('filters'):
@@ -37,7 +31,6 @@ def get_filter_link(request, tag):
         new_request.setlist('filters', filters)
     else:
         new_request.appendlist('filters', tag.title)
-
     return new_request.urlencode()
 
 
@@ -58,25 +51,24 @@ def count_recipes(request):
 
 
 @register.filter
-def pluralize(value, endings):
-    endings = endings.split(',')
-    if value % 100 in (11, 12, 13, 14):
-        return endings[2]
-    if value % 10 == 1:
-        return endings[0]
-    if value % 10 in (2, 3, 4):
-        return endings[1]
+def even(num):
+    if (num % 10 == 1) and (num % 100 != 11):
+        word_out = 'рецепт'
+    elif (num % 10 >= 2) and (num % 10 <= 4) and (
+            num % 100 < 10 or num % 100 >= 20):
+        word_out = 'рецепта'
     else:
-        return endings[2]
+        word_out = 'рецептов'
+    return word_out
 
 
 @register.filter
 def is_favorite(request, recipe_id):
-    status = Favorites.objects.filter(
+    is_exists = Favorites.objects.filter(
         user=request.user,
         recipe=recipe_id
     ).exists()
-    return status
+    return is_exists
 
 
 @register.filter
@@ -85,10 +77,3 @@ def in_shop_list(request, recipe_id):
         user=request.user, recipes=recipe_id
     ).exists()
     return is_exists
-
-
-# @register.filter
-# def check_blanks(value: str):
-#     raw = value.split(' ')
-#     print(raw)
-#     return raw
