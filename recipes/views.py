@@ -43,12 +43,12 @@ def new_recipe(request):
     if request.method == 'POST':
         form = RecipeForm(request.POST or None, files=request.FILES)
         tags = get_tag(request)
-        ingedient_names = request.POST.getlist('nameIngredient')
+        ingredient_names = request.POST.getlist('nameIngredient')
         ingredient_units = request.POST.getlist('unitsIngredient')
         amounts = request.POST.getlist('valueIngredient')
         if not tags:
             form.add_error('tag', 'Обязательное поле')
-        if not ingedient_names:
+        if not ingredient_names:
             form.add_error('ingredient', 'Ингредиент не выбран')
         if not form.is_valid():
             tags = Tag.objects.all()
@@ -59,9 +59,9 @@ def new_recipe(request):
         recipe.author = request.user
         recipe.save()
         products = [Ingredient.objects.get(
-            title=ingedient_names[i],
+            title=ingredient_names[i],
             dimension=ingredient_units[i]
-        ) for i in range(len(ingedient_names))]
+        ) for i in range(len(ingredient_names))]
         ingredients = []
         for i in range(len(amounts)):
             ingredients.append(IngredientItem(
@@ -108,22 +108,22 @@ def recipe_edit(request, recipe_id):
         form = RecipeForm(request.POST or None,
                           files=request.FILES or None, instance=recipe)
         tags = get_tag(request)
-        ingedient_names = request.POST.getlist('nameIngredient')
+        ingredient_names = request.POST.getlist('nameIngredient')
         ingredient_units = request.POST.getlist('unitsIngredient')
         amounts = request.POST.getlist('valueIngredient')
         if not tags:
             form.add_error('tag', 'Обязательное поле')
-        if not ingedient_names:
+        if not ingredient_names:
             form.add_error('ingredient', 'Ингредиент не выбран')
         if not form.is_valid():
             context = {'form': form}
             return render(request, 'edit_recipe.html', context)
         form.save()
-        products_num = len(ingedient_names)
+        products_num = len(ingredient_names)
         new_ingredients = []
         IngredientItem.objects.filter(recipe__id=recipe_id).delete()
         for i in range(products_num):
-            product = Ingredient.objects.get(title=ingedient_names[i],
+            product = Ingredient.objects.get(title=ingredient_names[i],
                                              dimension=ingredient_units[i])
             new_ingredients.append(
                 IngredientItem(recipe=recipe, ingredients=product,
