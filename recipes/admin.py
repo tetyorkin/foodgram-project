@@ -39,17 +39,16 @@ class SubscribeAdmin(admin.ModelAdmin):
 
 
 class FavoritesAdmin(admin.ModelAdmin):
-    list_display = ('user', 'recipe', 'created')
+    list_display = ('user', 'recipe',)
 
 
 class ShoplistAdmin(admin.ModelAdmin):
-    list_display = ('user', 'recipe', 'created')
+    list_display = ('user',)
 
 
 admin.site.register(Tag, TagsAdmin)
 admin.site.register(Recipe, RecipeAdmin)
 admin.site.register(Ingredient, IngredientAdmin)
-admin.site.register(Subscribe)
 admin.site.register(Subscribe, SubscribeAdmin)
 admin.site.register(Favorites, FavoritesAdmin)
 admin.site.register(ShopList, ShoplistAdmin)
