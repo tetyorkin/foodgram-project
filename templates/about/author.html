@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block title %}Об авторе{% endblock %}
+{% load static %}
+
+
+{% block content %}
+    <main class="main container">
+            <div class="main__header">
+                <h1 class="main__title">Об авторе</h1>
+            </div>
+            <div class="card-list">
+                <li class="shopping-list__item">Эксперт сети передачи данных. 12 лет работы с сетевым оборудованием</li>
+                <li class="shopping-list__item">IP Engineer</li>
+                <li class="shopping-list__item">CCNA, CCNP</li>
+                <li class="shopping-list__item">Cisco</li>
+                <li class="shopping-list__item">Huawei</li>
+                <li class="shopping-list__item">Juniper</li>
+                <li class="shopping-list__item">ZTE</li>
+                <li class="shopping-list__item">Alcatel</li>
+                <li class="shopping-list__item">D-Link</li>
+
+
+            </div>
+        {% include 'includes/paginator.html' %}
+    </main>
+
+{% endblock %}

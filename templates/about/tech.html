@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block title %}Тезнологии{% endblock %}
+{% load static %}
+
+
+{% block content %}
+    <main class="main container">
+            <div class="main__header">
+                <h1 class="main__title">Стек используемых технологий</h1>
+            </div>
+            <div class="card-list">
+                <li class="shopping-list__item">Python 3.8</li>
+                <li class="shopping-list__item">Django 3.1</li>
+                <li class="shopping-list__item">Docker</li>
+                <li class="shopping-list__item">Git</li>
+                <li class="shopping-list__item">CI/CD</li>
+                <li class="shopping-list__item">JavaScript</li>
+
+            </div>
+        {% include 'includes/paginator.html' %}
+    </main>
+
+{% endblock %}

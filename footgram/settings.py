@@ -35,12 +35,14 @@ ALLOWED_HOSTS = [
 INSTALLED_APPS = [
     'recipes',
     'users',
+    'about',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
     'sorl.thumbnail',
 ]
 
@@ -136,3 +138,5 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 LOGIN_REDIRECT_URL = 'index'
 LOGOUT_REDIRECT_URL = 'index'
+
+SITE_ID = 1
