@@ -57,8 +57,8 @@
                     </li>
 
                     <li class="single-card__item">
-                        {% if request.user.is_authenticated and request.user != author %}
-                        {% if not request|is_follower:author %}
+                        {% if request.user.is_authenticated and request.user != recipe.author %}
+                        {% if not request|is_follower:recipe.author %}
                             <button class="button button_style_light-blue button_size_subscribe" name="subscribe" data-out>Подписаться на автора</button>
                         {% else %}
                             <button class="button button_style_light-blue button_size_subscribe" name="subscribe" >Отписаться от автора</button>
