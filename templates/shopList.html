@@ -9,6 +9,7 @@
 {% block content %}
     {% load thumbnail %}
     {% csrf_token %}
+<main class="main container">
     <div class="main__header">
         <h1 class="main__title">Список покупок</h1>
     </div>
@@ -28,11 +29,12 @@
             {% endfor %}
         </ul>
         {% if recipes %}
-            <a class="button button_style_blue" href="{% url 'purchases_download' %}">Скачать список</a>
+            <a href="{% url 'purchases_download' %}"><button class="button button_style_blue">Скачать список</button></a>
         {% endif %}
     </div>
 {% endblock %}
 
+</main>
 {% block javascript %}
     {% load static %}
     <script src="{% static 'js/components/Header.js' %}"></script>
