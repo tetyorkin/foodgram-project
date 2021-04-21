@@ -281,9 +281,9 @@ def subscription(request):
 def delete_subscription(request, author_id):
     data = {'success': 'true'}
     follow = get_object_or_404(
-            Subscribe,
-            user__username=request.user.username,
-            author__id=author_id
+        Subscribe,
+        user__username=request.user.username,
+        author__id=author_id
     )
     if not follow:
         data['success'] = 'false'
