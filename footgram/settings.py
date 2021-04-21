@@ -24,12 +24,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ.get('SECRET_KEY'),
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get('STATE', False)
+DEBUG = os.environ.get('DEBUG', False)
 
-if not DEBUG:
-    ALLOWED_HOSTS = [
-        'foodgram'
-    ]
+ALLOWED_HOSTS = [
+    'foodgram'
+]
 
 # Application definition
 
