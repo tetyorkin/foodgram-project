@@ -26,9 +26,7 @@ SECRET_KEY = os.environ.get('SECRET_KEY'),
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DEBUG', False)
 
-ALLOWED_HOSTS = [
-    'foodgram'
-]
+ALLOWED_HOSTS = ['foodgram']
 
 # Application definition
 
@@ -80,6 +78,8 @@ WSGI_APPLICATION = 'footgram.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
+
+
 
 DATABASES = {
     'default': {
