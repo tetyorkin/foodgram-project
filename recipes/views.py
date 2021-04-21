@@ -177,7 +177,7 @@ def purchases_add(request):
     if request.method == 'POST':
         recipe_id = json.loads(request.body).get('id')
         recipe = get_object_or_404(Recipe, id=recipe_id)
-        _, shop_list = ShopList.objects.get_or_create(user=request.user)[0]
+        shop_list = ShopList.objects.get_or_create(user=request.user)[0]
         shop_list.recipes.add(recipe)
         return JsonResponse({'success': True})
     return JsonResponse({'success': False})
@@ -186,7 +186,7 @@ def purchases_add(request):
 def purchases_delete(request, recipe_id):
     if request.method == 'DELETE':
         user = request.user
-        _, shop_list = ShopList.objects.get_or_create(user=user.id)[0]
+        shop_list, _ = ShopList.objects.get_or_create(user=user.id)
         current_recipe = get_object_or_404(Recipe, id=recipe_id)
         shop_list.recipes.remove(current_recipe)
         return JsonResponse({'success': True})
@@ -196,7 +196,7 @@ def purchases_delete(request, recipe_id):
 @login_required(login_url='accounts/login/')
 def purchases_delete_index(request, recipe_id):
     user = request.user
-    _, shop_list = ShopList.objects.get_or_create(user=user.id)[0]
+    shop_list, _ = ShopList.objects.get_or_create(user=user.id)
     current_recipe = get_object_or_404(Recipe, id=recipe_id)
     shop_list.recipes.remove(current_recipe)
     return redirect('purchases_list')
