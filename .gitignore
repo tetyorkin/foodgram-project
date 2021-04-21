@@ -105,4 +105,3 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
-/recipes/migrations/
