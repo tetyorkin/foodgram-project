@@ -13,11 +13,12 @@
             <h1 class="main__title">Рецепты</h1>
             {% include 'includes/tags.html' %}
             </div>
-        <div class="card-list">
-        {% for recipe in page %}
-        {% include 'includes/recipe_card.html' %}
-        {% endfor %}
-    </div>
+            <div class="card-list">
+                {% for recipe in page %}
+                {% include 'includes/recipe_card.html' %}
+                {% endfor %}
+            </div>
+        </div>
         {% include 'includes/paginator.html' %}
     </main>
 </body>

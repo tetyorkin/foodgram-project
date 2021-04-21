@@ -22,22 +22,22 @@
             </div>
 
             {% with form.tag as field %}
-            <div class="form__group">
-            <p class="form__label">Теги</p>
-                <div class="form__field-group">
-                    <div class="tags">
-                        {% for tag, value in field.field.choices %}
-                        <div class="tags__item">
-                            <input type="checkbox" name="{{ tag.instance.title }}" id="id_{{ tag.instance.title }}" class="tags__checkbox tags__checkbox_style_{{ tag.instance.color }}">
-                            <label for="id_{{ tag.instance.title }}" class="tags__label">{{ tag.instance.name }}</label>
+                <div class="form__group">
+                <p class="form__label">Теги</p>
+                    <div class="form__field-group">
+                        <div class="tags">
+                            {% for tag, value in field.field.choices %}
+                            <div class="tags__item">
+                                <input type="checkbox" name="{{ tag.instance.title }}" id="id_{{ tag.instance.title }}" class="tags__checkbox tags__checkbox_style_{{ tag.instance.color }}">
+                                <label for="id_{{ tag.instance.title }}" class="tags__label">{{ tag.instance.name }}</label>
+                            </div>
+                            {% endfor %}
                         </div>
-                        {% endfor %}
+                            {% for error in form.tag.errors %}
+                                <span class="form__error">{{ error }}</span>
+                            {% endfor %}
                     </div>
-                        {% for error in form.tag.errors %}
-                            <span class="form__error">{{ error }}</span>
-                        {% endfor %}
-                    </div>
-            </div>
+                </div>
             {% endwith %}
 
             <div class="form__group">
@@ -71,7 +71,6 @@
                             <span class="form__error">{{ error }}</span>
                         {% endfor %}
                     {% endif %}
-
                 </div>
            </div>
            <div class="form__group">
@@ -94,12 +93,8 @@
                     {% endif %}
                 </div>
            </div>
-
-
             <div class="form__footer">
-
                 <button class="button button_style_blue">Сохранить рецепт</button>
-
             </div>
         </form>
     </div>
