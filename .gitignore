@@ -86,7 +86,7 @@ celerybeat.pid
 *.sage.py
 
 # Environments
-.env
+footgram/.env
 .venv
 env/
 venv/

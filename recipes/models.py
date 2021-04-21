@@ -7,17 +7,21 @@ from users.models import User
 class Ingredient(models.Model):
     title = models.CharField(max_length=100, verbose_name='название')
     dimension = models.CharField(
-        max_length=50,
+        max_length=255,
         verbose_name='единица измерения',
         default='г.',
     )
+
+    class Meta:
+        verbose_name = 'Ингредиент'
+        verbose_name_plural = 'Ингредиенты'
 
     def __str__(self):
         return f'{self.title}'
 
 
 class Tag(models.Model):
-    tag_options = {
+    TAG_OPTIONS = {
         'breakfast': ['orange', 'Завтрак'],
         'lunch': ['green', 'Обед'],
         'dinner': ['purple', 'Ужин'],
@@ -32,23 +36,27 @@ class Tag(models.Model):
         max_length=20, choices=TAG_CHOICES, verbose_name='tag name'
     )
 
+    class Meta:
+        verbose_name = 'Тэг'
+        verbose_name_plural = 'Тэги'
+
     def __str__(self):
         return self.title
 
     @property
     def color(self):
-        return self.tag_options[self.title][0]
+        return self.TAG_OPTIONS[self.title][0]
 
     @property
     def name(self):
-        return self.tag_options[self.title][1]
+        return self.TAG_OPTIONS[self.title][1]
 
 
 class Recipe(models.Model):
     author = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name='recipes'
     )
-    title = models.CharField(max_length=50)
+    title = models.CharField(max_length=255)
     image = models.ImageField(upload_to='media/', blank=True, null=True)
     description = models.TextField()
     ingredient = models.ManyToManyField(
@@ -58,7 +66,7 @@ class Recipe(models.Model):
     )
     tag = models.ManyToManyField(Tag, verbose_name='Тэг')
     duration = models.PositiveSmallIntegerField(
-        'время приготовления', validators=[MinValueValidator(1)]
+        'время приготовления', validators=(MinValueValidator(1),)
     )
     pub_date = models.DateTimeField('Дата публикации', auto_now_add=True,
                                     db_index=True)
@@ -85,6 +93,10 @@ class IngredientItem(models.Model):
         verbose_name='Ингридиент',
     )
     count = models.IntegerField()
+
+    class Meta:
+        verbose_name = 'Ингредиент и рецепт'
+        verbose_name_plural = 'Ингредиент и рецепты'
 
     def __str__(self):
         return f'{self.ingredients}'

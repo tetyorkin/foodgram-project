@@ -33,10 +33,10 @@
                         </div>
                         {% endfor %}
                     </div>
-                    {% for error in form.tag.errors %}
-                        <span class="form__error">{{ error }}</span>
-                    {% endfor %}
-                </div>
+                        {% for error in form.tag.errors %}
+                            <span class="form__error">{{ error }}</span>
+                        {% endfor %}
+                    </div>
             </div>
             {% endwith %}
 
@@ -66,27 +66,34 @@
                 <div class="form__field-group form__field-group_time">
                     {{ form.duration|add_classes:'form__input' }}
                     <label for="id_time" class="form__label">минут</label>
-                     {% for error in form.duration.errors %}
-                        <span class="form__error">{{ error }}</span>
-                    {% endfor %}
+                    {% if error %}
+                        {% for error in form.duration.errors %}
+                            <span class="form__error">{{ error }}</span>
+                        {% endfor %}
+                    {% endif %}
+
                 </div>
-            </div>
-            <div class="form__group">
+           </div>
+           <div class="form__group">
                 <label for="id_description" class="form__label">Описание</label>
                 <div class="form__field-group">
                     {{ form.description|add_classes:'form__textarea' }}
-                    {% for error in form.description.errors %}
-                        <span class="form__error">{{ error }}</span>
-                    {% endfor %}
+                    {% if error %}
+                        {% for error in form.description.errors %}
+                            <span class="form__error">{{ error }}</span>
+                        {% endfor %}
+                    {% endif %}
                 </div>
-            </div>
-            <div class="form__group">
-                <span class="form__label">Загрузить фото</span>
+           </div>
+           <div class="form__group">
+               <span class="form__label">Загрузить фото</span>
                 <div class="form__field-group">
                     {{ form.image|add_classes:"form__file-button-image" }}
-                    <span class="form__error">{{ form.image.errors }}</span>
+                    {% if error %}
+                        <span class="form__error">{{ form.image.errors }}</span>
+                    {% endif %}
                 </div>
-            </div>
+           </div>
 
 
             <div class="form__footer">

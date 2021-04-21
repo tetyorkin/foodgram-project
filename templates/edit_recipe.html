@@ -19,10 +19,10 @@
                 <div class="form__field-group">
                     {{ form.title|add_classes:'form__input' }}
                     {% if form.errors %}
-                    {% for error in form.title.errors %}
-                        <span class="form__error">{{ error|escape }}</span>
-                    {% endfor %}
-                {% endif %}
+                        {% for error in form.title.errors %}
+                            <span class="form__error">{{ error|escape }}</span>
+                        {% endfor %}
+                    {% endif %}
                 </div>
             </div>
 
@@ -80,14 +80,6 @@
                 </div>
             </div>
 
-
-
-
-
-
-
-
-
             <div class="form__group">
                 <label for="id_time" class="form__label">Время приготовления</label>
                 <div class="form__field-group form__field-group_time">
@@ -126,6 +118,7 @@
                 <button class="button button_style_blue">Сохранить</button> &nbsp;&nbsp;&nbsp;
                 <button type="button" class="button button_style_red">
                     <a  href="{% url 'delete_recipe' recipe.id %}">Удалить</a>
+
                 </button>
             </div>
         </form>
