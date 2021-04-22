@@ -103,7 +103,7 @@ def recipe_edit(request, recipe_id):
         user = request.user
         author = recipe.author
         if user != author:
-            return render(request, 'forbiten.html')
+            return render(request, 'forbidden.html')
         form = RecipeForm(request.POST or None,
                           files=request.FILES or None, instance=recipe)
         tags = get_tag(request)
