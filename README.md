@@ -1,5 +1,4 @@
-![foodgram-project workflow](https://github.com/tetyorkin/foodgram-project/workflows/foodgram%20project/badge.svg)
-
+![foodgram-project workflow](https://github.com/github/workflow/status/:tetyorkin/:foodgram-project/:workflow)
 # [Продуктовый помощник http://130.61.53.178/](http://130.61.53.178/)
 
 Сервис, где пользователи смогут публиковать рецепты, подписываться на публикации других пользователей, добавлять понравившиеся рецепты в список «Избранное», а перед походом в магазин скачивать сводный список продуктов, необходимых для приготовления одного или нескольких выбранных блюд.
