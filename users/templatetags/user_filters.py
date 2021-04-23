@@ -6,15 +6,22 @@ from recipes.models import Favorites, ShopList, Subscribe
 register = template.Library()
 
 
-@register.filter(name='add_classes')
+@register.filter()
 def add_classes(field, css):
     return field.as_widget(attrs={'class': css})
 
 
-@register.filter(name='remove_tag')
-def remove_tag(value):
+@register.filter()
+def remove_li(value):
     new_value = value.replace('<li>', '').replace('</li>', '\n')
     return strip_tags(new_value)
+
+
+@register.filter()
+def url_with_get(request, number):
+    query = request.GET.copy()
+    query['page'] = number
+    return query.urlencode()
 
 
 @register.filter()
@@ -34,7 +41,7 @@ def get_filter_link(request, tag):
     return new_request.urlencode()
 
 
-@register.filter(name='is_follower')
+@register.filter()
 def is_follower(request, profile):
     if Subscribe.objects.filter(
         user=request.user, author=profile

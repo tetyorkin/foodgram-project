@@ -21,24 +21,24 @@
                 </div>
             </div>
 
-            {% with form.tag as field %}
-                <div class="form__group">
+            <div class="form__group">
                 <p class="form__label">Теги</p>
-                    <div class="form__field-group">
-                        <div class="tags">
-                            {% for tag, value in field.field.choices %}
-                            <div class="tags__item">
-                                <input type="checkbox" name="{{ tag.instance.title }}" id="id_{{ tag.instance.title }}" class="tags__checkbox tags__checkbox_style_{{ tag.instance.color }}">
-                                <label for="id_{{ tag.instance.title }}" class="tags__label">{{ tag.instance.name }}</label>
-                            </div>
-                            {% endfor %}
+                <div class="form__field-group">
+                    <div class="tags">
+                        {% for tag in tags %}
+                        <div class="tags__item">
+                            <input type="checkbox" name="{{ tag.title }}" id="id_{{ tag.title }}" class="tags__checkbox tags__checkbox_style_{{ tag.color }}"{%if tag in recipe.tag.all %} checked {% endif %}>
+                            <label for="id_{{ tag.title }}" class="tags__label">{{ tag.name }}</label>
                         </div>
-                            {% for error in form.tag.errors %}
-                                <span class="form__error">{{ error }}</span>
-                            {% endfor %}
+                        {% endfor %}
                     </div>
+                    {% if request.POST %}
+                        {% for error in form.tag.errors %}
+                            <span class="form__error">{{ error|escape }}</span>
+                        {% endfor %}
+                    {% endif %}
                 </div>
-            {% endwith %}
+            </div>
 
             <div class="form__group">
                 <label for="nameIngredient" class="form__label">Ингредиенты</label>
@@ -52,16 +52,15 @@
                         <label for="cantidad" class="form__label" id="cantidadVal">шт.</label>
                     </div>
                     <div class="form__field-group-ingredientes-container">
-
                     </div>
-                    <span class="form__ingredient-link" id="addIng">Добавить ингредиент</span>
                     {% for error in form.ingredient.errors %}
                         <span class="form__error">{{ error }}</span>
                     {% endfor %}
+                    <span class="form__ingredient-link" id="addIng">Добавить ингредиент</span>
                 </div>
             </div>
 
-           <div class="form__group">
+            <div class="form__group">
                 <label for="id_time" class="form__label">Время приготовления</label>
                 <div class="form__field-group form__field-group_time">
                     {{ form.duration|add_classes:'form__input' }}
@@ -72,8 +71,8 @@
                         {% endfor %}
                     {% endif %}
                 </div>
-           </div>
-           <div class="form__group">
+            </div>
+            <div class="form__group">
                 <label for="id_description" class="form__label">Описание</label>
                 <div class="form__field-group">
                     {{ form.description|add_classes:'form__textarea' }}
@@ -83,16 +82,25 @@
                         {% endfor %}
                     {% endif %}
                 </div>
-           </div>
-           <div class="form__group">
-               <span class="form__label">Загрузить фото</span>
+            </div>
+            <div class="form__group">
+                <span class="form__label">Загрузить фото</span>
                 <div class="form__field-group">
-                    {{ form.image|add_classes:"form__file-button-image" }}
-                    {% if error %}
-                        <span class="form__error">{{ form.image.errors }}</span>
+                    <label for="id_file" class="form__file-button">Выбрать файл</label>
+                    <input type="file" class="form__file" accept="image/*" name="image" id="id_file" onchange="loadFile(event)">
+                    {% if request.POST %}
+                        <span class="form__error">{{ form.image.errors|striptags }}</span>
                     {% endif %}
                 </div>
-           </div>
+            </div>
+            <div class="form__group">
+                <span class="form__label"></span>
+                <div class="form__field-group">
+                    <div class="polaroid">
+                        <img id="new_img" />
+                    </div>
+                </div>
+            </div>
             <div class="form__footer">
                 <button class="button button_style_blue">Сохранить рецепт</button>
             </div>
@@ -102,11 +110,11 @@
 
 </main>
     {% block scripts %}
-    <script src="{% static 'js/config/config.js' %}"></script>
-    <script src="{% static 'js/components/Header.js' %}"></script>
-    <script src="{% static 'js/utils/debouncing.js' %}"></script>
-    <script src="{% static 'js/api/Api.js' %}"></script>
-    <script src="{% static 'formRecipe.js' %}"></script>
+        <script src="{% static 'js/config/config.js' %}"></script>
+        <script src="{% static 'js/components/Header.js' %}"></script>
+        <script src="{% static 'js/utils/debouncing.js' %}"></script>
+        <script src="{% static 'js/api/Api.js' %}"></script>
+        <script src="{% static 'formRecipe.js' %}"></script>
+        <script src="{% static 'preview.image.min.js' %}"></script>
     {% endblock %}
-
 {% endblock %}
