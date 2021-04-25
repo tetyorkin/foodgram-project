@@ -4,7 +4,7 @@
 <div class="card" data-id="{{ recipe.id }}"> 
     {% load thumbnail %}
     {% thumbnail recipe.image '500x500' crop="center" upscale=True as im %}
-    <a href="{% url 'recipe' recipe.id %}" class="link" target="_blank"><img src="{{ im.url }}" alt="{{ recipe.title }}" class="card__image"></a> 
+        <a href="{% url 'recipe' recipe.id %}" class="link" target="_blank"><img src="{{ im.url }}" alt="{{ recipe.title }}" class="card__image"></a>
     {% endthumbnail %}
     <div class="card__body"> 
         <a class="card__title link" href="{% url 'recipe' recipe.id %}" target="_blank">{{ recipe.title }}</a> 
@@ -24,19 +24,19 @@
     <div class="card__footer"> 
        {% if request.user.is_authenticated %}
 
-            {% if request|in_shop_list:recipe.id %}
+           {% if request|in_shop_list:recipe.id %}
                 <button class="button button_style_light-blue-outline" name="purchases">
                 <span class="icon-check button__icon"></span> Рецепт добавлен</button>
-            {% else %}
+           {% else %}
                 <button class="button button_style_light-blue" name="purchases" data-out>
                 <span class="icon-plus button__icon"></span>Добавить в покупки</button>
-            {% endif %}
+           {% endif %}
 
            {% if request|is_favorite:recipe.id %}
                     <button class="button button_style_none" name="favorites"><span class="icon-favorite icon-favorite_active"></span></button>
-            {% else %}
+           {% else %}
                     <button class="button button_style_none" name="favorites" data-out><span class="icon-favorite"></span></button>
-            {% endif %}
+           {% endif %}
        {% endif %}
 </div>     
 </div>

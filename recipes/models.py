@@ -33,7 +33,10 @@ class Tag(models.Model):
         ('dinner', 'Ужин'),
     ]
     title = models.CharField(
-        max_length=20, choices=TAG_CHOICES, verbose_name='tag name'
+        unique=True,
+        max_length=20,
+        choices=TAG_CHOICES,
+        verbose_name='tag name'
     )
 
     class Meta:
@@ -92,7 +95,7 @@ class IngredientItem(models.Model):
         related_name='ingredients',
         verbose_name='Ингридиент',
     )
-    count = models.IntegerField()
+    count = models.PositiveSmallIntegerField(validators=(MinValueValidator(1),))
 
     class Meta:
         verbose_name = 'Ингредиент и рецепт'

@@ -71,7 +71,6 @@ def recipe_view(request, recipe_id):
     return render(request, 'recipe.html', context)
 
 
-@login_required()
 def recipe_edit(request, recipe_id):
     recipe = get_object_or_404(Recipe, id=recipe_id)
     if request.user != recipe.author:
