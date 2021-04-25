@@ -193,7 +193,6 @@ def purchases_download(request):
     return response
 
 
-@login_required()
 def profile(request, username):
     author = get_object_or_404(User, username=username)
     recipe = Recipe.objects.select_related('author').filter(
